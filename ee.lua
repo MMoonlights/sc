@@ -458,425 +458,480 @@ local function __captureApplication(captures, ...)
     __save(lines)
 end
 
-local function __v6Escape(value)
-    local text = tostring(value)
-    text = text:gsub("\\", "\\\\")
-    text = text:gsub("\r", "\\r")
-    text = text:gsub("\n", "\\n")
-    text = text:gsub("\t", "\\t")
-    return text
+local __v61Stage2Root = nil
+local __v61Targets = {}
+local __v61TargetIds = {}
+local __v61TargetDone = {}
+local __v61SweepStarted = false
+local __v61Lines = {}
+local __v61LastWrite = 0
+
+local function __v61Escape(value)
+    local s = tostring(value)
+    s = s:gsub("\\", "\\\\")
+    s = s:gsub("\r", "\\r")
+    s = s:gsub("\n", "\\n")
+    s = s:gsub("\t", "\\t")
+    return s
 end
 
-local function __v6Number(value)
-    if value ~= value then
-        return "nan"
-    end
-    if value == math.huge then
-        return "inf"
-    end
-    if value == -math.huge then
-        return "-inf"
-    end
-    return string.format("%.17g", value)
-end
+local function __v61Literal(value)
+    local t = type(value)
 
-local function __v6LuaNumber(value)
-    if value ~= value then
-        return "(0/0)"
-    end
-    if value == math.huge then
-        return "math.huge"
-    end
-    if value == -math.huge then
-        return "-math.huge"
-    end
-    return string.format("%.17g", value)
-end
-
-local function __v6SortedKeys(tbl)
-    local keys = {}
-    local key = nil
-
-    while true do
-        key = next(tbl, key)
-        if key == nil then
-            break
+    if t == "nil" then
+        return "nil"
+    elseif t == "boolean" then
+        return value and "true" or "false"
+    elseif t == "number" then
+        if value ~= value then
+            return "nan"
+        elseif value == math.huge then
+            return "inf"
+        elseif value == -math.huge then
+            return "-inf"
         end
-        keys[#keys + 1] = key
+        return string.format("%.17g", value)
+    elseif t == "string" then
+        return string.format("%q", value)
     end
 
-    table.sort(keys, function(left, right)
-        local leftType = type(left)
-        local rightType = type(right)
+    return tostring(value)
+end
 
-        if leftType ~= rightType then
-            return leftType < rightType
-        end
+local function __v61Emit(...)
+    local packed = table.pack(...)
+    local parts = table.create(packed.n)
 
-        if leftType == "number" then
-            if left ~= left then
-                return false
+    for i = 1, packed.n do
+        parts[i] = __v61Escape(packed[i])
+    end
+
+    __v61Lines[#__v61Lines + 1] = table.concat(parts, "\t")
+end
+
+local function __v61Flush(force)
+    if type(writefile) ~= "function" then
+        return
+    end
+
+    local now = os.clock()
+    if not force and now - __v61LastWrite < 0.5 then
+        return
+    end
+    __v61LastWrite = now
+
+    local data = table.concat(__v61Lines, "\n") .. "\n"
+
+    pcall(writefile, "stage2_lazy_decode_v61.txt", data)
+
+    if type(makefolder) == "function" then
+        pcall(function()
+            if type(isfolder) ~= "function" or not isfolder("LuraphRecovery") then
+                makefolder("LuraphRecovery")
             end
-            if right ~= right then
-                return true
-            end
-            return left < right
-        end
-
-        if leftType == "string" then
-            return left < right
-        end
-
-        return tostring(left) < tostring(right)
-    end)
-
-    return keys
+        end)
+        pcall(writefile, "LuraphRecovery/stage2_lazy_decode_v61.txt", data)
+    end
 end
 
-local function __v6CollectTables(root)
-    local list = {}
+local function __v61Wait()
+    if task and type(task.wait) == "function" then
+        task.wait(0.02)
+    elseif type(wait) == "function" then
+        wait(0.02)
+    end
+end
+
+local function __v61Spawn(fn)
+    if task and type(task.spawn) == "function" then
+        task.spawn(fn)
+    else
+        coroutine.wrap(fn)()
+    end
+end
+
+local function __v61Defer(fn)
+    if task and type(task.delay) == "function" then
+        task.delay(0.75, fn)
+    elseif task and type(task.defer) == "function" then
+        task.defer(fn)
+    else
+        __v61Spawn(fn)
+    end
+end
+
+local function __v61ProtoSize(proto)
+    if type(proto) ~= "table" then
+        return -1
+    end
+
+    local best = -1
+    for i = 1, 16 do
+        local v = rawget(proto, i)
+        if type(v) == "table" then
+            local ok, n = pcall(rawlen, v)
+            if ok and n > best then
+                best = n
+            end
+        end
+    end
+    return best
+end
+
+local function __v61RegisterTarget(target)
+    if type(target) ~= "table" then
+        return nil
+    end
+
+    local id = __v61TargetIds[target]
+    if id then
+        return id
+    end
+
+    id = #__v61Targets + 1
+    __v61Targets[id] = target
+    __v61TargetIds[target] = id
+
+    local indexMap = rawget(target, 0)
+    local count = 0
+    if type(indexMap) == "table" then
+        for key in pairs(indexMap) do
+            if type(key) == "number" and key == key then
+                count += 1
+            end
+        end
+    end
+
+    __v61Emit("TARGET_REGISTERED", id, "index_count", count)
+    print(("V61 target %d registered (%d lazy keys)"):format(id, count))
+    __v61Flush(true)
+
+    return id
+end
+
+local function __v61Record(target, index, value, source)
+    local id = __v61RegisterTarget(target)
+    if not id then
+        return
+    end
+
+    __v61Emit(
+        "DECODE",
+        "target", id,
+        "index", index,
+        "source", source,
+        "type", type(value),
+        "typeof", __safeTypeof(value),
+        "identity", __identityOf(value),
+        "value", __v61Literal(value)
+    )
+    __v61Flush(false)
+end
+
+local function __v61SortedLazyKeys(target)
+    local out = {}
+    local indexMap = rawget(target, 0)
+
+    if type(indexMap) ~= "table" then
+        return out
+    end
+
+    for key in pairs(indexMap) do
+        if type(key) == "number" and key == key then
+            out[#out + 1] = key
+        end
+    end
+
+    table.sort(out)
+    return out
+end
+
+local function __v61SweepTarget(id, target)
+    if __v61TargetDone[id] then
+        return
+    end
+
+    local keys = __v61SortedLazyKeys(target)
+    __v61Emit("SWEEP_BEGIN", id, "keys", #keys)
+    __v61Flush(true)
+
+    local decoded = 0
+    local errors = 0
+
+    for n, key in ipairs(keys) do
+        local current = rawget(target, key)
+
+        if current == nil then
+            local ok, result = pcall(function()
+                return target[key]
+            end)
+
+            if ok then
+                current = rawget(target, key)
+                if current == nil then
+                    current = result
+                end
+                decoded += 1
+                __v61Record(target, key, current, "forced")
+            else
+                errors += 1
+                __v61Emit(
+                    "DECODE_ERROR",
+                    "target", id,
+                    "index", key,
+                    "error", __v61Escape(result)
+                )
+            end
+        else
+            __v61Record(target, key, current, "existing")
+        end
+
+        if n % 4 == 0 then
+            __v61Flush(false)
+            __v61Wait()
+        end
+
+        if n % 32 == 0 then
+            print(("V61 target %d: %d/%d"):format(id, n, #keys))
+        end
+    end
+
+    __v61TargetDone[id] = true
+    __v61Emit(
+        "SWEEP_END",
+        id,
+        "keys", #keys,
+        "decoded", decoded,
+        "errors", errors
+    )
+    print(("V61 target %d complete (%d keys, %d errors)"):format(id, #keys, errors))
+    __v61Flush(true)
+end
+
+local function __v61CollectRawGraph(root)
+    local tables = {}
     local ids = {}
     local queue = {}
 
     if type(root) ~= "table" then
-        return list, ids
+        return tables, ids
     end
 
     ids[root] = 1
-    list[1] = root
+    tables[1] = root
     queue[1] = root
 
-    local readIndex = 1
-
-    while readIndex <= #queue do
-        local current = queue[readIndex]
-        readIndex += 1
+    local read = 1
+    while read <= #queue do
+        local tbl = queue[read]
+        read += 1
 
         local key = nil
         while true do
-            key = next(current, key)
+            key = next(tbl, key)
             if key == nil then
                 break
             end
 
-            local value = rawget(current, key)
+            local value = rawget(tbl, key)
 
-            if type(key) == "table" and ids[key] == nil then
-                local id = #list + 1
+            if type(key) == "table" and not ids[key] then
+                local id = #tables + 1
                 ids[key] = id
-                list[id] = key
+                tables[id] = key
                 queue[#queue + 1] = key
             end
 
-            if type(value) == "table" and ids[value] == nil then
-                local id = #list + 1
+            if type(value) == "table" and not ids[value] then
+                local id = #tables + 1
                 ids[value] = id
-                list[id] = value
+                tables[id] = value
                 queue[#queue + 1] = value
             end
         end
 
-        if #list > 200000 then
+        if read % 128 == 0 then
+            __v61Wait()
+        end
+
+        if #tables > 50000 then
             break
         end
     end
 
-    return list, ids
+    return tables, ids
 end
 
-local function __v6ForceLazyConstants(root)
-    local report = {}
-    local totalAttempts = 0
-    local totalDecoded = 0
-    local totalErrors = 0
-    local passes = 0
+local function __v61GraphAtom(value, ids)
+    local t = type(value)
 
-    for pass = 1, 12 do
-        passes = pass
-
-        local tables = __v6CollectTables(root)
-        local decodedThisPass = 0
-        local attemptsThisPass = 0
-        local candidatesThisPass = 0
-
-        for _, target in ipairs(tables) do
-            local indexMap = rawget(target, 0)
-
-            if type(indexMap) == "table" then
-                local mapKeys = __v6SortedKeys(indexMap)
-                local numericKeyCount = 0
-
-                for _, decodedIndex in ipairs(mapKeys) do
-                    if type(decodedIndex) == "number" and decodedIndex == decodedIndex then
-                        numericKeyCount += 1
-                    end
-                end
-
-                if numericKeyCount > 0 then
-                    candidatesThisPass += 1
-
-                    for _, decodedIndex in ipairs(mapKeys) do
-                        if type(decodedIndex) == "number"
-                            and decodedIndex == decodedIndex
-                            and rawget(target, decodedIndex) == nil
-                        then
-                            attemptsThisPass += 1
-                            totalAttempts += 1
-
-                            local ok, value = pcall(function()
-                                return target[decodedIndex]
-                            end)
-
-                            if ok then
-                                if rawget(target, decodedIndex) ~= nil then
-                                    decodedThisPass += 1
-                                    totalDecoded += 1
-                                end
-                            else
-                                totalErrors += 1
-
-                                if totalErrors <= 200 then
-                                    report[#report + 1] = table.concat({
-                                        "DECODE_ERROR",
-                                        tostring(pass),
-                                        tostring(decodedIndex),
-                                        __v6Escape(value)
-                                    }, "\t")
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
-
-        report[#report + 1] = table.concat({
-            "PASS",
-            tostring(pass),
-            "tables=" .. tostring(#tables),
-            "lazy_tables=" .. tostring(candidatesThisPass),
-            "attempts=" .. tostring(attemptsThisPass),
-            "decoded=" .. tostring(decodedThisPass)
-        }, "\t")
-
-        if decodedThisPass == 0 then
-            break
-        end
-    end
-
-    table.insert(report, 1, table.concat({
-        "SUMMARY",
-        "passes=" .. tostring(passes),
-        "attempts=" .. tostring(totalAttempts),
-        "decoded=" .. tostring(totalDecoded),
-        "errors=" .. tostring(totalErrors)
-    }, "\t"))
-
-    return report
-end
-
-local function __v6GraphValue(value, ids)
-    local valueType = type(value)
-
-    if valueType == "nil" then
+    if t == "nil" then
         return "NIL", ""
-    elseif valueType == "boolean" then
+    elseif t == "boolean" then
         return "BOOL", value and "true" or "false"
-    elseif valueType == "number" then
-        return "NUM", __v6Number(value)
-    elseif valueType == "string" then
-        return "STR", __v6Escape(value)
-    elseif valueType == "table" then
+    elseif t == "number" then
+        return "NUM", __v61Literal(value)
+    elseif t == "string" then
+        return "STR", __v61Escape(value)
+    elseif t == "table" then
         local id = ids[value]
-        return "REF", id and ("T" .. tostring(id)) or ""
+        return "REF", id and ("T" .. id) or ""
+    elseif t == "function" then
+        return "FUNCTION", __v61Escape(__identityOf(value) ~= "" and __identityOf(value) or tostring(value))
     else
-        return "OPAQUE_" .. valueType, __v6Escape(value)
+        return string.upper(t), __v61Escape(value)
     end
 end
 
-local function __v6LuaValue(value, ids)
-    local valueType = type(value)
-
-    if valueType == "nil" then
-        return "nil"
-    elseif valueType == "boolean" then
-        return value and "true" or "false"
-    elseif valueType == "number" then
-        return __v6LuaNumber(value)
-    elseif valueType == "string" then
-        return string.format("%q", value)
-    elseif valueType == "table" then
-        local id = ids[value]
-        if id then
-            return "T[" .. tostring(id) .. "]"
-        end
+local function __v61SaveGraph()
+    if type(__v61Stage2Root) ~= "table" or type(writefile) ~= "function" then
+        return
     end
 
-    return nil
-end
+    print("V61 raw graph serialization started")
 
-local function __v6SerializeStage2(root, decodeReport)
-    local tables, ids = __v6CollectTables(root)
-
-    local graph = {}
-    local strings = {}
-    local lua = {}
-    local opaqueCount = 0
-    local stringCount = 0
-
-    graph[#graph + 1] = "STAGE2_GRAPH_V6"
-    graph[#graph + 1] = "ROOT\tT1"
-    graph[#graph + 1] = "TABLE_COUNT\t" .. tostring(#tables)
-
-    lua[#lua + 1] = "local T = {}"
-
-    for id = 1, #tables do
-        lua[#lua + 1] = "T[" .. tostring(id) .. "] = {}"
-    end
+    local tables, ids = __v61CollectRawGraph(__v61Stage2Root)
+    local lines = {
+        "STAGE2_RAW_GRAPH_V61",
+        "ROOT\tT1",
+        "TABLE_COUNT\t" .. tostring(#tables)
+    }
+    local stringLines = {}
+    local stringSeen = {}
 
     for id, tbl in ipairs(tables) do
-        local rawLength = 0
-        pcall(function()
-            rawLength = rawlen(tbl)
-        end)
+        lines[#lines + 1] = "TABLE\tT" .. tostring(id)
 
-        graph[#graph + 1] = table.concat({
-            "TABLE",
-            "T" .. tostring(id),
-            "RAWLEN",
-            tostring(rawLength)
-        }, "\t")
-
-        local keys = __v6SortedKeys(tbl)
-
-        for _, key in ipairs(keys) do
-            local value = rawget(tbl, key)
-            local keyKind, keyText = __v6GraphValue(key, ids)
-            local valueKind, valueText = __v6GraphValue(value, ids)
-
-            graph[#graph + 1] = table.concat({
-                "ENTRY",
-                "T" .. tostring(id),
-                keyKind,
-                keyText,
-                valueKind,
-                valueText
-            }, "\t")
-
-            if type(value) == "string" then
-                stringCount += 1
-                strings[#strings + 1] = table.concat({
-                    "T" .. tostring(id),
-                    keyKind,
-                    keyText,
-                    __v6Escape(value)
-                }, "\t")
-            end
-
-            local luaKey = __v6LuaValue(key, ids)
-            local luaValue = __v6LuaValue(value, ids)
-
-            if luaKey ~= nil and luaValue ~= nil then
-                lua[#lua + 1] =
-                    "T[" .. tostring(id) .. "][" .. luaKey .. "] = " .. luaValue
-            else
-                opaqueCount += 1
-            end
-        end
-    end
-
-    lua[#lua + 1] = "return T[1]"
-
-    local unique = {}
-    local uniqueStrings = {}
-
-    for _, line in ipairs(strings) do
-        local lastTab = nil
-        for index = #line, 1, -1 do
-            if line:sub(index, index) == "\t" then
-                lastTab = index
+        local key = nil
+        while true do
+            key = next(tbl, key)
+            if key == nil then
                 break
             end
+
+            local value = rawget(tbl, key)
+            local kk, kv = __v61GraphAtom(key, ids)
+            local vk, vv = __v61GraphAtom(value, ids)
+
+            lines[#lines + 1] = table.concat({
+                "ENTRY",
+                "T" .. tostring(id),
+                kk, kv,
+                vk, vv
+            }, "\t")
+
+            if type(value) == "string" and not stringSeen[value] then
+                stringSeen[value] = true
+                stringLines[#stringLines + 1] = value
+            end
         end
 
-        local text = lastTab and line:sub(lastTab + 1) or line
-        if unique[text] == nil then
-            unique[text] = true
-            uniqueStrings[#uniqueStrings + 1] = text
-        end
-    end
-
-    table.sort(uniqueStrings)
-
-    local summary = {
-        "STAGE2_EAGER_DECODE_V6",
-        "table_count=" .. tostring(#tables),
-        "string_entries=" .. tostring(stringCount),
-        "unique_strings=" .. tostring(#uniqueStrings),
-        "opaque_entries=" .. tostring(opaqueCount)
-    }
-
-    for _, line in ipairs(decodeReport) do
-        summary[#summary + 1] = line
-    end
-
-    local graphText = table.concat(graph, "\n") .. "\n"
-    local stringsText = table.concat(strings, "\n") .. "\n"
-    local uniqueText = table.concat(uniqueStrings, "\n") .. "\n"
-    local luaText = table.concat(lua, "\n") .. "\n"
-    local summaryText = table.concat(summary, "\n") .. "\n"
-
-    if type(writefile) == "function" then
-        pcall(writefile, "stage2_prototype_graph_v6.txt", graphText)
-        pcall(writefile, "stage2_strings_v6.txt", stringsText)
-        pcall(writefile, "stage2_unique_strings_v6.txt", uniqueText)
-        pcall(writefile, "stage2_prototype_v6.lua", luaText)
-        pcall(writefile, "stage2_decode_report_v6.txt", summaryText)
-
-        if type(makefolder) == "function" then
-            pcall(function()
-                if type(isfolder) ~= "function" or not isfolder("LuraphRecovery") then
-                    makefolder("LuraphRecovery")
-                end
-            end)
-
-            pcall(writefile, "LuraphRecovery/stage2_prototype_graph_v6.txt", graphText)
-            pcall(writefile, "LuraphRecovery/stage2_strings_v6.txt", stringsText)
-            pcall(writefile, "LuraphRecovery/stage2_unique_strings_v6.txt", uniqueText)
-            pcall(writefile, "LuraphRecovery/stage2_prototype_v6.lua", luaText)
-            pcall(writefile, "LuraphRecovery/stage2_decode_report_v6.txt", summaryText)
+        if id % 64 == 0 then
+            __v61Wait()
         end
     end
 
-    print("STAGE2_V6_TABLES:", #tables)
-    print("STAGE2_V6_STRINGS:", stringCount)
-    print("STAGE2_V6_UNIQUE_STRINGS:", #uniqueStrings)
-    print("STAGE2_V6_OPAQUE:", opaqueCount)
-    print("STAGE2_V6_SAVED")
+    table.sort(stringLines)
+
+    local graphData = table.concat(lines, "\n") .. "\n"
+    local stringsData = table.concat(stringLines, "\n") .. "\n"
+
+    pcall(writefile, "stage2_raw_graph_v61.txt", graphData)
+    pcall(writefile, "stage2_unique_strings_v61.txt", stringsData)
+
+    if type(makefolder) == "function" then
+        pcall(writefile, "LuraphRecovery/stage2_raw_graph_v61.txt", graphData)
+        pcall(writefile, "LuraphRecovery/stage2_unique_strings_v61.txt", stringsData)
+    end
+
+    print("V61 raw graph saved:", #tables, "tables,", #stringLines, "unique strings")
+end
+
+local function __v61StartSweepWhenReady()
+    if __v61SweepStarted or #__v61Targets < 3 then
+        return
+    end
+
+    __v61SweepStarted = true
+
+    __v61Defer(function()
+        __v61Emit("GLOBAL_SWEEP_BEGIN", "targets", #__v61Targets)
+        __v61Flush(true)
+
+        for id = 1, #__v61Targets do
+            __v61SweepTarget(id, __v61Targets[id])
+        end
+
+        __v61Emit("GLOBAL_SWEEP_END")
+        __v61Flush(true)
+        __v61SaveGraph()
+
+        print("V61 ALL DONE")
+    end)
+end
+
+local function __v61WrapP10(closure)
+    return function(...)
+        local args = table.pack(...)
+        local target = args[1]
+        local index = args[2]
+
+        local results = table.pack(closure(...))
+
+        if type(target) == "table" then
+            __v61RegisterTarget(target)
+            __v61Record(target, index, results[1], "natural")
+            __v61StartSweepWhenReady()
+        end
+
+        return table.unpack(results, 1, results.n)
+    end
 end
 
 local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
     local closure = factory(proto, captures)
+    local protoSize = __v61ProtoSize(proto)
+
+    if protoSize == 105 then
+        return __v61WrapP10(closure)
+    end
 
     if not __isApplicationPrototype(proto) then
         return closure
     end
 
-    print("APP_CAPTURE_V6_TARGET_FOUND")
+    print("APP_CAPTURE_V61_TARGET_FOUND")
 
     return function(...)
         __captureApplication(captures, ...)
 
         local results = table.pack(closure(...))
-        local stage2 = results[1]
+        __v61Stage2Root = results[1]
 
-        if type(stage2) == "table" then
-            print("STAGE2_V6_EAGER_DECODE_BEGIN")
-            local decodeReport = __v6ForceLazyConstants(stage2)
-            __v6SerializeStage2(stage2, decodeReport)
-            print("STAGE2_V6_EAGER_DECODE_END")
-        else
-            warn("STAGE2_V6_ERROR: application root did not return a table")
+        __v61Emit(
+            "STAGE2_ROOT_READY",
+            "type", type(__v61Stage2Root),
+            "value", tostring(__v61Stage2Root)
+        )
+        __v61Flush(true)
+
+        if task and type(task.delay) == "function" then
+            task.delay(30, function()
+                if not __v61SweepStarted and #__v61Targets > 0 then
+                    __v61SweepStarted = true
+                    __v61Emit("TIMEOUT_SWEEP_BEGIN", "targets", #__v61Targets)
+                    __v61Flush(true)
+
+                    for id = 1, #__v61Targets do
+                        __v61SweepTarget(id, __v61Targets[id])
+                    end
+
+                    __v61Emit("TIMEOUT_SWEEP_END")
+                    __v61Flush(true)
+                    __v61SaveGraph()
+                    print("V61 TIMEOUT SWEEP DONE")
+                end
+            end)
         end
 
         return table.unpack(results, 1, results.n)
