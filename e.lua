@@ -908,7 +908,7 @@ local __KRONOS_TRACE_STEP = 0
 local __KRONOS_TRACE_PROTO_IDS = setmetatable({}, { __mode = "k" })
 local __KRONOS_TRACE_PROTO_COUNT = 0
 local __KRONOS_TRACE_MAX_STEPS = 600000
-local __KRONOS_TRACE_PATH = "KRONOS_T23_vm_trace_v6.tsv"
+local __KRONOS_TRACE_PATH = "KRONOS_T23_vm_trace_v7.tsv"
 local __KRONOS_TRACE_STARTED_FILE = false
 
 local __KRONOS_T23_CLOSURE = nil
@@ -1100,6 +1100,134 @@ local function __kronosCaptureSummary(captures)
     return "count=" .. tostring(count) .. ";" .. table.concat(parts, ",")
 end
 
+-- V7: do not invoke T24 manually. Patch only the auth transport/saved-key inputs,
+-- then wait for the ORIGINAL T1 auth flow to call T24 naturally.
+local __KRONOS_AUTH_PATCHED = false
+
+local function __kronosSyntheticPandaResponseV7()
+    return {
+        Success = true,
+        StatusCode = 200,
+        StatusMessage = "OK",
+        Headers = { ["content-type"] = "application/json" },
+        Body = [[{"V2_Authentication":"success","Key_Information":{"Premium_Mode":false,"NoKey_Requirement":false,"expiresAt":4102444800},"reason":"success","message":"Authenticated"}]],
+    }
+end
+
+local function __kronosIsAuthUrlV7(url)
+    url = tostring(url or ""):lower()
+    return url:find("panda", 1, true) ~= nil
+        or url:find("v2_validation", 1, true) ~= nil
+        or url:find("pandauth", 1, true) ~= nil
+end
+
+local function __kronosPatchAuthEnvironmentV7()
+    if __KRONOS_AUTH_PATCHED then return end
+    __KRONOS_AUTH_PATCHED = true
+
+    local env = _G
+    if type(getgenv) == "function" then
+        local ok, result = pcall(getgenv)
+        if ok and type(result) == "table" then
+            env = result
+        end
+    end
+
+    local real = {
+        request = rawget(env, "request"),
+        http_request = rawget(env, "http_request"),
+        isfile = rawget(env, "isfile"),
+        readfile = rawget(env, "readfile"),
+        writefile = rawget(env, "writefile"),
+        syn = rawget(env, "syn"),
+        http = rawget(env, "http"),
+        fluxus = rawget(env, "fluxus"),
+    }
+
+    local function requestProxy(options, ...)
+        local url = type(options) == "table" and (options.Url or options.URL or options.url) or options
+        if __kronosIsAuthUrlV7(url) then
+            __kronosTraceEmit("AUTH_SYNTHETIC_SUCCESS", tostring(url))
+            __kronosTraceFlush(true)
+            return __kronosSyntheticPandaResponseV7()
+        end
+
+        local fn = real.request or real.http_request
+        if type(fn) == "function" then
+            return fn(options, ...)
+        end
+
+        return {
+            Success = false,
+            StatusCode = 599,
+            StatusMessage = "offline trace",
+            Body = "",
+        }
+    end
+
+    rawset(env, "request", requestProxy)
+    rawset(env, "http_request", requestProxy)
+
+    local function makeProxyTable(original)
+        local proxy = {}
+        return setmetatable(proxy, {
+            __index = function(_, key)
+                if key == "request" then return requestProxy end
+                if type(original) == "table" then return original[key] end
+                return nil
+            end,
+            __newindex = function(_, key, value)
+                if type(original) == "table" then
+                    original[key] = value
+                else
+                    rawset(proxy, key, value)
+                end
+            end,
+        })
+    end
+
+    if type(real.syn) == "table" then rawset(env, "syn", makeProxyTable(real.syn)) end
+    if type(real.http) == "table" then rawset(env, "http", makeProxyTable(real.http)) end
+    if type(real.fluxus) == "table" then rawset(env, "fluxus", makeProxyTable(real.fluxus)) end
+
+    rawset(env, "isfile", function(path)
+        if tostring(path) == "KRONOS/saved_key.txt" then
+            return true
+        end
+        if type(real.isfile) == "function" then
+            return real.isfile(path)
+        end
+        return false
+    end)
+
+    rawset(env, "readfile", function(path)
+        if tostring(path) == "KRONOS/saved_key.txt" then
+            __kronosTraceEmit("AUTH_SYNTHETIC_KEY_READ")
+            __kronosTraceFlush(true)
+            return "KRONOS-TRACE-AUTHORIZED"
+        end
+        if type(real.readfile) == "function" then
+            return real.readfile(path)
+        end
+        error("readfile unavailable for " .. tostring(path), 2)
+    end)
+
+    rawset(env, "writefile", function(path, data)
+        if tostring(path) == "KRONOS/saved_key.txt" then
+            __kronosTraceEmit("AUTH_SYNTHETIC_KEY_WRITE", tostring(data))
+            __kronosTraceFlush(true)
+            return
+        end
+        if type(real.writefile) == "function" then
+            return real.writefile(path, data)
+        end
+    end)
+
+    __kronosTraceEmit("AUTH_ENV_PATCHED_V7")
+    __kronosTraceFlush(true)
+    print("KRONOS_AUTH_ENV_PATCHED_V7")
+end
+
 local function __kronosWrapP10V4(baseClosure, captures)
     -- V4 deliberately does NOT call the old __v61WrapP10 observer here.
     -- That observer starts the broad lazy-decode sweep, which polluted V3's
@@ -1251,7 +1379,8 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
         __KRONOS_T24_CLOSURE = closure
         __KRONOS_T24_PROTO = proto
         __KRONOS_T24_CAPTURES = captures
-        print("KRONOS_T24_SUCCESS_CALLBACK_CAPTURED_V6", protoSize)
+
+        print("KRONOS_T24_NATURAL_CALLBACK_CAPTURED_V7", protoSize)
         __kronosTraceEmit(
             "T24_CAPTURED",
             "size", protoSize,
@@ -1259,12 +1388,48 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
         )
         __kronosTraceFlush(true)
 
-        -- Do not execute here. The original NEWCLOSURE handler fills the
-        -- capture table only after this factory hook returns.
-        if __KRONOS_STAGE2_ROOT_RETURNED then
-            __kronosScheduleSuccessCallback()
+        -- IMPORTANT: do not call this closure here.
+        -- Return a wrapper and let the ORIGINAL key-success path invoke it.
+        return function(...)
+            local args = table.pack(...)
+            __KRONOS_TRACE_STEP = 0
+            __KRONOS_TRACE_ACTIVE = true
+
+            __kronosTraceEmit(
+                "T24_NATURAL_BEGIN",
+                "argc", args.n,
+                "captures_now", __kronosCaptureSummary(captures),
+                "t23_ready", tostring(type(__KRONOS_T23_CLOSURE) == "function")
+            )
+            __kronosTraceFlush(true)
+
+            print(
+                "KRONOS_T24_NATURAL_EXEC_BEGIN_V7",
+                protoSize,
+                "->",
+                __kronosProtoSize(__KRONOS_T23_PROTO)
+            )
+
+            local packed = table.pack(pcall(closure, table.unpack(args, 1, args.n)))
+            local ok = packed[1]
+
+            if ok then
+                __kronosTraceEmit("T24_NATURAL_RETURN", "results", packed.n - 1)
+                print("KRONOS_T24_NATURAL_EXEC_RETURN_V7", packed.n - 1)
+            else
+                __kronosTraceEmit("T24_NATURAL_ERROR", tostring(packed[2]))
+                warn("KRONOS_T24_NATURAL_EXEC_ERROR_V7", packed[2])
+            end
+
+            __KRONOS_TRACE_ACTIVE = false
+            __kronosTraceFlush(true)
+
+            if not ok then
+                error(packed[2], 0)
+            end
+
+            return table.unpack(packed, 2, packed.n)
         end
-        return closure
     end
 
     -- V6 critical fix:
@@ -1295,6 +1460,10 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
 
     return function(...)
         __captureApplication(captures, ...)
+
+        -- Install the synthetic auth transport BEFORE stage2/T1 begins.
+        -- T24 itself is still invoked only by the original auth flow.
+        __kronosPatchAuthEnvironmentV7()
 
         local results = table.pack(closure(...))
         __v61Stage2Root = results[1]
@@ -1328,7 +1497,7 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
     end
 end
 
-print("KRONOS_T23_SUCCESS_TRACE_V6_READY")
+print("KRONOS_T23_NATURAL_AUTH_TRACE_V7_READY")
 
 -- This file was protected using Luraph Obfuscator v14.7 [https://lura.ph/]
 
