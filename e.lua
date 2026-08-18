@@ -2231,6 +2231,9 @@ local __v61Targets = {}
 local __v61TargetIds = {}
 local __v61TargetDone = {}
 local __v61SweepStarted = false
+local __KRONOS_P10_DIRECT_DECODER = nil
+local __KRONOS_P10_PUBLIC_WRAPPER = nil
+
 local __v61Lines = {}
 local __v61LastWrite = 0
 
@@ -2279,7 +2282,7 @@ end
 
 local function __v61Flush(force)
     -- ALL-IN-ONE scanner keeps the lazy-decode log in memory.
-    -- Nothing is written until KRONOS_SCAN_ALL_IN_ONE_V3.txt is finalized.
+    -- Nothing is written until KRONOS_SCAN_ALL_IN_ONE_V4.txt is finalized.
     return
 end
 
@@ -2712,12 +2715,13 @@ local function __kronosAiScanStage2(root)
     end
 
     local report = {}
-    report[#report + 1] = "KRONOS_SCAN_ALL_IN_ONE_V3"
+    report[#report + 1] = "KRONOS_SCAN_ALL_IN_ONE_V4"
     report[#report + 1] = "scan_mode=single_script_in_memory"
     report[#report + 1] = "external_input_files=0"
     report[#report + 1] = "live_key_bypass=false"
     report[#report + 1] = "network_required_for_scan=false"
     report[#report + 1] = "lazy_decoder_observer=enabled"
+    report[#report + 1] = "full_p10_operand_sweep=enabled"
     report[#report + 1] = "root=T1"
     report[#report + 1] = "application=" .. pname(t23)
     report[#report + 1] = "auth_success=" .. (__kronosAiProtoValid(t24) and pname(t24) or "missing")
@@ -2734,7 +2738,7 @@ local function __kronosAiScanStage2(root)
     report[#report + 1] = "===== APP_CAPTURE ====="
     report[#report + 1] = __KRONOS_APP_CAPTURE_TEXT
 
-    report[#report + 1] = "===== OPCODE_MAP_V3 ====="
+    report[#report + 1] = "===== OPCODE_MAP_V4 ====="
     report[#report + 1] = __KRONOS_EMBEDDED_OPCODE_MAP_JSON
 
     report[#report + 1] = "===== AUTH_TO_APPLICATION ====="
@@ -2814,9 +2818,9 @@ local function __kronosAiScanStage2(root)
 
     local data = table.concat(report, "\n") .. "\n"
     if type(writefile) == "function" then
-        local ok, err = pcall(writefile, "KRONOS_SCAN_ALL_IN_ONE_V3.txt", data)
+        local ok, err = pcall(writefile, "KRONOS_SCAN_ALL_IN_ONE_V4.txt", data)
         if ok then
-            print("KRONOS_ALL_IN_ONE_DONE: KRONOS_SCAN_ALL_IN_ONE_V3.txt")
+            print("KRONOS_ALL_IN_ONE_DONE: KRONOS_SCAN_ALL_IN_ONE_V4.txt")
             print("KRONOS_ALL_IN_ONE_BYTES:", #data)
         else
             warn("KRONOS_ALL_IN_ONE_WRITE_ERROR:", tostring(err))
@@ -2832,8 +2836,119 @@ end
 
 local function __v61SaveGraph()
     -- Legacy multi-file saver disabled in ALL-IN-ONE mode.
-    -- The full raw graph is embedded in KRONOS_SCAN_ALL_IN_ONE_V3.txt.
+    -- The full raw graph is embedded in KRONOS_SCAN_ALL_IN_ONE_V4.txt.
     return
+end
+
+
+local function __v61FullGraphP10Sweep(root)
+    local decoder = __KRONOS_P10_DIRECT_DECODER
+    if type(decoder) ~= "function" or type(root) ~= "table" then
+        __v61Emit("FULL_P10_SWEEP_SKIPPED", "decoder", type(decoder), "root", type(root))
+        return
+    end
+
+    local allTables = __v61CollectRawGraph(root)
+    local candidates = 0
+    local attempted = 0
+    local decoded = 0
+    local errors = 0
+    local already = 0
+
+    __v61Emit("FULL_P10_SWEEP_BEGIN", "tables", #allTables)
+    print("V61 FULL P10 SWEEP BEGIN", #allTables)
+
+    for tableIndex, target in ipairs(allTables) do
+        local indexMap = rawget(target, 0)
+
+        -- In this Luraph v14.7 VM, a lazily-decoded operand/constant array
+        -- keeps its per-index resolver key table in slot [0].
+        if type(indexMap) == "table" then
+            local keys = {}
+            local key = nil
+
+            while true do
+                key = next(indexMap, key)
+                if key == nil then break end
+                if type(key) == "number" and key == key and key >= 1 then
+                    keys[#keys + 1] = key
+                end
+            end
+
+            if #keys > 0 then
+                candidates += 1
+                table.sort(keys)
+
+                for _, operandIndex in ipairs(keys) do
+                    if rawget(target, operandIndex) == nil then
+                        attempted += 1
+
+                        -- Call the real captured P10 resolver directly.
+                        -- It owns the original helper-slot table and typed
+                        -- value decoder, so this uses the protected script's
+                        -- own lazy decode logic rather than reimplementing it.
+                        local ok, result = pcall(decoder, target, operandIndex)
+
+                        if ok then
+                            local materialized = rawget(target, operandIndex)
+                            if materialized == nil then
+                                materialized = result
+                            end
+
+                            if materialized ~= nil then
+                                decoded += 1
+                            end
+
+                            __v61Record(target, operandIndex, materialized, "full_p10")
+                        else
+                            errors += 1
+                            __v61Emit(
+                                "FULL_P10_ERROR",
+                                "table", tableIndex,
+                                "index", operandIndex,
+                                "error", __v61Escape(result)
+                            )
+                        end
+                    else
+                        already += 1
+                    end
+
+                    if attempted % 128 == 0 then
+                        __v61Wait()
+                    end
+                end
+            end
+        end
+
+        if tableIndex % 256 == 0 then
+            print(
+                "V61 FULL P10 SWEEP",
+                tableIndex .. "/" .. #allTables,
+                "candidates", candidates,
+                "decoded", decoded,
+                "errors", errors
+            )
+            __v61Wait()
+        end
+    end
+
+    __v61Emit(
+        "FULL_P10_SWEEP_END",
+        "tables", #allTables,
+        "candidates", candidates,
+        "attempted", attempted,
+        "decoded", decoded,
+        "already", already,
+        "errors", errors
+    )
+
+    print(
+        "V61 FULL P10 SWEEP END",
+        "candidates", candidates,
+        "attempted", attempted,
+        "decoded", decoded,
+        "errors", errors
+    )
 end
 
 local function __v61StartSweepWhenReady()
@@ -2853,6 +2968,11 @@ local function __v61StartSweepWhenReady()
 
         __v61Emit("GLOBAL_SWEEP_END")
         __v61Flush(true)
+
+        -- V4 final operand pass: sweep every lazy array with the original P10
+        -- resolver before serializing the graph.
+        __v61FullGraphP10Sweep(__v61Stage2Root)
+
         __kronosAiScanStage2(__v61Stage2Root)
 
         print("V61 ALL DONE")
@@ -3218,13 +3338,14 @@ local function __kronosPatchAuthEnvironmentV7()
 end
 
 local function __kronosWrapP10V4(baseClosure, captures)
-    -- ALL-IN-ONE V3: this is a scan-only build, so re-enable the exact v61
-    -- lazy-decoder observer. V2 accidentally disabled it, which preserved the
-    -- prototype tree but left game constants such as FarmState/CombatState
-    -- encoded and produced game_related_prototypes=0.
+    -- ALL-IN-ONE V4: retain both the original P10 resolver and the observed
+    -- wrapper. The original resolver is later used to materialize lazy
+    -- operands for every stage2 table without executing the T23 payload.
     local observedClosure = __v61WrapP10(baseClosure)
+    __KRONOS_P10_DIRECT_DECODER = baseClosure
 
-    return function(...)
+    local publicWrapper
+    publicWrapper = function(...)
         local args
         if __KRONOS_TRACE_ACTIVE then
             args = table.pack(...)
@@ -3252,6 +3373,9 @@ local function __kronosWrapP10V4(baseClosure, captures)
 
         return table.unpack(results, 1, results.n)
     end
+
+    __KRONOS_P10_PUBLIC_WRAPPER = publicWrapper
+    return publicWrapper
 end
 
 local function __kronosRunSuccessCallback()
