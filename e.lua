@@ -908,15 +908,17 @@ local __KRONOS_TRACE_STEP = 0
 local __KRONOS_TRACE_PROTO_IDS = setmetatable({}, { __mode = "k" })
 local __KRONOS_TRACE_PROTO_COUNT = 0
 local __KRONOS_TRACE_MAX_STEPS = 600000
-local __KRONOS_TRACE_PATH = "KRONOS_T23_vm_trace_v4.tsv"
+local __KRONOS_TRACE_PATH = "KRONOS_T23_vm_trace_v5.tsv"
 local __KRONOS_TRACE_STARTED_FILE = false
 
 local __KRONOS_T23_CLOSURE = nil
 local __KRONOS_T23_PROTO = nil
 local __KRONOS_T24_CLOSURE = nil
 local __KRONOS_T24_PROTO = nil
+local __KRONOS_T24_CAPTURES = nil
 local __KRONOS_T24_STARTED = false
 local __KRONOS_T24_SCHEDULED = false
+local __KRONOS_STAGE2_ROOT_RETURNED = false
 
 local function __kronosSafe(value)
     local kind = type(value)
@@ -1142,12 +1144,13 @@ local function __kronosRunSuccessCallback()
     __kronosTraceEmit(
         "T24_SUCCESS_BEGIN",
         "t24_size", __kronosProtoSize(__KRONOS_T24_PROTO),
-        "t23_size", __kronosProtoSize(__KRONOS_T23_PROTO)
+        "t23_size", __kronosProtoSize(__KRONOS_T23_PROTO),
+        "t24_captures_now", __kronosCaptureSummary(__KRONOS_T24_CAPTURES)
     )
     __kronosTraceFlush(true)
 
     print(
-        "KRONOS_T24_SUCCESS_EXEC_BEGIN",
+        "KRONOS_T24_SUCCESS_EXEC_BEGIN_V5",
         __kronosProtoSize(__KRONOS_T24_PROTO),
         "->",
         __kronosProtoSize(__KRONOS_T23_PROTO)
@@ -1159,10 +1162,10 @@ local function __kronosRunSuccessCallback()
 
     if ok then
         __kronosTraceEmit("T24_SUCCESS_RETURN", "results", result.n)
-        print("KRONOS_T24_SUCCESS_EXEC_RETURN", result.n)
+        print("KRONOS_T24_SUCCESS_EXEC_RETURN_V5", result.n)
     else
         __kronosTraceEmit("T24_SUCCESS_ERROR", tostring(result))
-        warn("KRONOS_T24_SUCCESS_EXEC_ERROR", result)
+        warn("KRONOS_T24_SUCCESS_EXEC_ERROR_V5", result)
     end
 
     -- Critical V4 fix: never trace unrelated v61 background sweeps after the
@@ -1172,31 +1175,55 @@ local function __kronosRunSuccessCallback()
 end
 
 local function __kronosScheduleSuccessCallback()
+    -- V5: NEVER execute T24 while T1 is still running. The v14.7 stage2
+    -- lazy-decoder mutates/initializes shared state during T1 execution.
     if __KRONOS_T24_SCHEDULED then return end
+    if not __KRONOS_STAGE2_ROOT_RETURNED then return end
+    if type(__KRONOS_T24_CLOSURE) ~= "function" then return end
+
     __KRONOS_T24_SCHEDULED = true
 
     local function run()
-        -- T24 exists only after T1 has advanced well past T23 creation. A short
-        -- delay lets the current T1 VM instruction/closure construction finish.
+        -- One scheduler turn after the real root returned. This preserves all
+        -- root initialization and lets closure-capture tables finish mutation.
         if task and type(task.wait) == "function" then
-            task.wait(0.35)
+            task.wait()
         end
         __kronosRunSuccessCallback()
     end
 
-    if task and type(task.spawn) == "function" then
+    if task and type(task.defer) == "function" then
+        task.defer(run)
+    elseif task and type(task.spawn) == "function" then
         task.spawn(run)
-    elseif task and type(task.delay) == "function" then
-        task.delay(0.35, __kronosRunSuccessCallback)
     else
-        __kronosRunSuccessCallback()
+        run()
     end
 end
 
 local function __kronosWrapStage2Root(closure, proto)
     return function(...)
-        print("KRONOS_STAGE2_ROOT_EXEC_FOUND_V4", __kronosProtoSize(proto))
-        return closure(...)
+        print("KRONOS_STAGE2_ROOT_EXEC_FOUND_V5", __kronosProtoSize(proto))
+
+        local results = table.pack(closure(...))
+
+        __KRONOS_STAGE2_ROOT_RETURNED = true
+        __kronosTraceEmit(
+            "STAGE2_ROOT_RETURNED",
+            "results", results.n,
+            "t23_ready", tostring(type(__KRONOS_T23_CLOSURE) == "function"),
+            "t24_ready", tostring(type(__KRONOS_T24_CLOSURE) == "function"),
+            "t24_captures_now", __kronosCaptureSummary(__KRONOS_T24_CAPTURES)
+        )
+        __kronosTraceFlush(true)
+        print(
+            "KRONOS_STAGE2_ROOT_RETURNED_V5",
+            "T23", type(__KRONOS_T23_CLOSURE),
+            "T24", type(__KRONOS_T24_CLOSURE)
+        )
+
+        __kronosScheduleSuccessCallback()
+        return table.unpack(results, 1, results.n)
     end
 end
 
@@ -1223,14 +1250,20 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
     if exactT24 ~= nil and proto == exactT24 then
         __KRONOS_T24_CLOSURE = closure
         __KRONOS_T24_PROTO = proto
-        print("KRONOS_T24_SUCCESS_CALLBACK_CAPTURED", protoSize)
+        __KRONOS_T24_CAPTURES = captures
+        print("KRONOS_T24_SUCCESS_CALLBACK_CAPTURED_V5", protoSize)
         __kronosTraceEmit(
             "T24_CAPTURED",
             "size", protoSize,
-            "captures", __kronosCaptureSummary(captures)
+            "captures_at_creation", __kronosCaptureSummary(captures)
         )
         __kronosTraceFlush(true)
-        __kronosScheduleSuccessCallback()
+
+        -- Do not execute here. The original NEWCLOSURE handler fills the
+        -- capture table only after this factory hook returns.
+        if __KRONOS_STAGE2_ROOT_RETURNED then
+            __kronosScheduleSuccessCallback()
+        end
         return closure
     end
 
@@ -1284,7 +1317,7 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
     end
 end
 
-print("KRONOS_T23_SUCCESS_TRACE_V4_READY")
+print("KRONOS_T23_SUCCESS_TRACE_V5_READY")
 
 -- This file was protected using Luraph Obfuscator v14.7 [https://lura.ph/]
 
