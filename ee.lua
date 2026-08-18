@@ -283,61 +283,1808 @@ local function __dumpSmallTable(lines, prefix, tbl, maxEntries)
     end
 end
 
+local __KRONOS_EMBEDDED_OPCODE_MAP_JSON = [====[
+[
+  {
+    "opcode": 0,
+    "mnemonic": "OP_0",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "H=(H[I]);(l)[f]=(H);;;;;;;"
+  },
+  {
+    "opcode": 1,
+    "mnemonic": "OP_1",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "I=g[n];H=H[I];H=not H;;;;;;;;"
+  },
+  {
+    "opcode": 2,
+    "mnemonic": "OP_2",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "H=(l);;;;;;;;"
+  },
+  {
+    "opcode": 3,
+    "mnemonic": "OP_3",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=0x5f;f=(0b0);H=nil;I=(nil);J=nil;p=49;repeat if p==11 then H=(E[0B1000]);p=(-4294967142+(E[0X8][0X8]((E[0X8][5](F-F))+p)));continue;elseif p==0x50 then J=(0X6);p=0X72+((E[0X8][9]((E[0X8][0XA]((E[0X8][0XB](p,(F))))),F,p))-F);continue;elseif p==0B11011__11 then I=I[J];break;elseif p==0X6E then I=(0X5);H=(H[I]);p=0X72+(E[0X8][0B1000]((E[0B1000__][0x8]((E[0X8][0b1100](F))))-F));elseif p==0X75_ then I=(E[0X8__]);p=(-4294966978+(E[0X8][0x8]((F>p and p or p)+p+F)));else if p==49 then H=4503599627370495;p=(-395+((E[8][0B01011](p,(F)))-F+p+p));else if p==92 then f*=H;p=-0X57+(p-F+F+F+F);end;end;end;until false;L=(nil);p=0X28__;repeat if not(p<0X67)then L=(0x5);break;else J=(E[8]);p=(0B1__0100+((E[0B1000][0X7]((F~=p and p or F)+F,p,F))+p));continue;end;until false;J=(J[L]);L=E[8];e=0X7__;L=(L[e]);s=nil;k=(nil);p=0X74;while true do if p>104 and p<113 then s=(F);p=-4294966973+((E[8][0X8](F+p+p))+F);continue;elseif p<0B1110100 and p>0x6D then e-=s;break;elseif p<0B1101_101 and p>0X5A then k=(z[n]);p=-0x301+((E[8][11](p-F,(F)))-p+p);continue;elseif p>70 and p<0x68 then s=F;p=109+(E[0X8][0B11_00_]((E[8][0XB](F-F+p,(F)))));elseif p>0B1110001 then e=(E[0X8]);p=0x40+((E[0b1000][0B1010]((E[0X8][8]((E[0B1000][12](p)))),F,p))>=p and F or p);continue;elseif p<0B1011010 and p>0X43 then e=(e[s]);p=(-0x1C3+(E[0x8][0XB]((E[0X8][6](p-F,(F)))<=p and p or p,(F))));elseif p<67 then e=e(s,k);p=(0B110011+(E[8][7]((E[0x8][0B1001](F))-F+F,p)));else if p>0x27 and p<0X46 then s=0X6;p=(-2684354419+((E[0X8][0X8]((E[0x8][0Xd](F,(F)))))-F-p));end;end;end;p=(0x1C);while true do if p<53 and p>0X2e then I=I(J,L);p=(0B111100+(((E[8][11](F,(F)))-F>F and F or p)+F));elseif p<47 and p>0X1c then L=L(e);p=(-0x49+(E[0X8][7](((p<p and F or p)==p and p or F)+p,p,p)));elseif p>53 and p<0B1001011 then H=H(I);break;else if p>66 then e+=s;p=-4294967249+((E[0X8][8](p+F))+F+p);continue;elseif p<0b0011100 then L=(F);p=(0B101__111+(E[0B1000][12]((E[0x8][0X8]((E[8][14]((E[0X8][0B1001](p)),(F))))))));elseif p>0X2F and p<0x42 then J=J(L);p=0B0010000+(((E[0b1000][0B1100](p-p))>=p and F or F)-F);else if p<46 and p>16 then s=F;p=0X32+((F+p-p==p and F or p)-F);continue;end;end;end;end;p=45;while true do if p<=0b101000 then H-=I;p=(-4294967184+(E[0B1000__][0xe]((E[0B1000][12](F+F))-F,(F))));else if p~=0X67 then I=(F);p=-0X003+(E[0X8][0x7](F-F-F+p,F));continue;else f+=H;break;end;end;end;l+=f;p=(31);repeat if p<0b101001 then(z)[n]=l;p=(0X97+(F-F-p-F-F));continue;elseif p<0X72 and p>0X29 then H=(r[n]);break;else if p>67 and p<116 then l=a;f=(g[n]);p=(0X95+((E[0X8][0x7](F>F and F or F))+F-p));elseif p<67 and p>0X1f then l=l[f];p=154+((F+p-F>=F and F or p)-p);continue;else if p>114 then f=a;p=(-0x3b2+((E[0B1000_][0xe]((E[0x8][7]((E[0X00__8][0B110](p,(F))),p,F)),(F)))-F));end;end;end;until false;f=f[H];p=0x49;repeat if p==0X14 then if l then s=106;repeat if s==0B1101010 then s=0b1000001;l=M[n];continue;else if s~=0b1__000001 then else n=l;break;end;end;until false;end;break;else l=(l<f);p=-0X4+(E[0X8][0Xb__]((E[0X8][8]((E[8][0Xa](p,p,p))))~=F and F or p,(F)));continue;end;until false;;;;;;;"
+  },
+  {
+    "opcode": 4,
+    "mnemonic": "OP_4",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[g[n]]=(A[n]^a[r[n]]);;;;;;;;"
+  },
+  {
+    "opcode": 5,
+    "mnemonic": "ADD_RK",
+    "description": "R[r] = R[g] + A",
+    "t23_count": 26,
+    "raw_handler": "a[r[n]]=a[g[n]]+A[n];;;;;;;;"
+  },
+  {
+    "opcode": 6,
+    "mnemonic": "MICRO_LOAD_A",
+    "description": "persistent temporary: I = A[pc]",
+    "t23_count": 2,
+    "raw_handler": "I=(A[n]);;;;;;;"
+  },
+  {
+    "opcode": 7,
+    "mnemonic": "MICRO_LOAD_R_OPERAND",
+    "description": "persistent temporary: I = r[pc]",
+    "t23_count": 2,
+    "raw_handler": "I=(r[n]);;;;;;;;"
+  },
+  {
+    "opcode": 8,
+    "mnemonic": "MICRO_WALK_REGS",
+    "description": "persistent temporary: H = H[I]; I = R; J = r[pc]",
+    "t23_count": 1,
+    "raw_handler": "H=H[I];I=(a);J=(r[n]);;;;;;;;"
+  },
+  {
+    "opcode": 9,
+    "mnemonic": "NAMECALL_K",
+    "description": "R[r+1] = R[g]; R[r] = R[g][A]",
+    "t23_count": 165,
+    "raw_handler": "l=(r[n]);f=a[g[n]];(a)[l+0X1]=(f);(a)[l]=(f[A[n]]);;;;;;;;"
+  },
+  {
+    "opcode": 10,
+    "mnemonic": "GE_RR",
+    "description": "R[g] = (R[r] >= R[M])",
+    "t23_count": 1,
+    "raw_handler": "a[g[n]]=(a[r[n]]>=a[M[n]]);;;;;;;;"
+  },
+  {
+    "opcode": 11,
+    "mnemonic": "OP_11",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "I=I[J];H=(H[I]);(l)[f]=(H);;;;;;;;"
+  },
+  {
+    "opcode": 12,
+    "mnemonic": "SELFDECODE_12",
+    "description": "self-modifying decoder; rewrites current instruction arrays",
+    "t23_count": 23,
+    "raw_handler": "l=-0Xff__f08;f=0X0;H=(nil);I=(nil);J=(nil);p=(0X43);while true do if p<=0X46 then if not(p>39)then H=(H[I]);p=0X33+(E[0x8][0X9]((E[0B1000_][0B1100](p))+F>p and F or p));continue;elseif not(p<0b1000110)then f*=H;p=-4221566854+((E[8][0b1101]((E[0X8][0b1000](F<p and p or F)),(F)))-F);continue;else H=4503599627370495;p=-0Xfffba+(E[0X8][0XD]((E[0x8][0x7]((E[0B1000__][0XC](p+p)))),(F)));end;else if not(p>0B01101000)then if not(p<0X68)then I=7;p=(27+((E[0X8][0B1110__]((E[0X08][6]((E[0x8][0B1010](p)),(F))),(F)))+F));continue;else I=(E[0X08]);J=0X6;I=(I[J]);p=(113+(((E[0X8][0b1_000](p-p))~=p and F or F)-F));end;else if p==0B1110001_ then J=(E[0x8]);break;else H=E[0X8];p=-114584+(E[0X8][0B111]((E[0X8][0Xa]((E[0X8][0X00E]((E[8][0x5](F)),(F))),p,p))));end;end;end;end;L=(0B1_011);e=nil;p=(0X73);while true do if p>0X1D and p<0B1110011__ then L=(E[0X08]);p=0X3+((E[0X8][5](F~=p and p or F))-p+p);continue;else if p<0X36 then e=(0X8);break;else if p>0B110110 then J=J[L];p=(-133168971+((E[0X8][0b1101](F+p,(F)))-p-F));continue;end;end;end;end;p=(0X7_7);while true do if p<=38 then if not(p>0X1B)then if not(p>0x5)then I=I(J,L);p=0X16_+(E[0B1000][0XA](((E[0X8][0xE](p,(F)))>=p and p or p)+p));else if p==9 then J=z[n];p=(-36792+((E[0x8][0XB](p-p<F and p or p,(F)))+F));else J=J(L,e);p=43+((E[0X8][0X7]((E[0B10_00_][0X8](F))==F and p or F,p))-F);end;end;elseif not(p>0b100000)then J=z[n];p=(0B1_01110+((E[8][0x9]((E[0X8][0X5](F)),F))+F+F));else if p>=0b100110 then I-=J;break;else J=F;p=(-4294967175+((E[0x8][8]((E[0B1000][0B111]((E[8][0X07](p,F,F)),F,p))))-p));continue;end;end;else if not(p<=0x41)then if not(p>0B1__010__100)then if p==84 then I-=J;p=(11+(E[0X8][0X5](p+p+p-p)));else I-=J;p=-4294291435+((E[0B1000_][0B10__11]((E[8][8](p+p)),(F)))-F);continue;end;else if p==106 then e=(F);p=(65+(E[0B1000][0X00A]((E[0b1000][6](p-F+p,(F))),F,F)));continue;else L=(L[e]);p=(-13+(p-F-F+F+F));continue;end;end;elseif not(p<=44)then if p<=62 then L=(z[n]);p=(-0xBfFfEF+((E[0x8][0XD]((E[0x8][0b1000](p))>=F and F or F,(F)))-F));continue;else L=L(e);p=0X2C+(E[8][5](((E[0x8][0x7](p))>=F and F or p)-p));end;else e=(z[n]);p=(-4294967224+((E[0B1__000][8]((E[0B1000][0B110_0]((E[8][0XA](F,F))))))-F));continue;end;end;end;p=(0B100110);while true do if p<0X48 and p>0B100110 then f+=H;break;else if p>0X7 and p<0B111010 then J=F;p=(-0B1011+(p-p+p+F+p));continue;elseif p>0B1__110__10 and p<0b1001101 then J=z[n];p=-4294967360+((E[0B1000][0B1000]((E[0b1000][0X9](F))))+p+F);elseif p>72 then I+=J;p=(-0X5+((E[8][0B01_101]((E[0X8][14]((E[0b10__00][0B110](p,(F))),(F))),(F)))<=p and p or p));else if p<38 then H=H(I,J);p=(0X3f+((F+F-F>p and p or p)-F));continue;end;end;end;end;p=0X51;while true do if p==14 then H=(a);break;elseif p==0B101011 then l=(a);f=(M[n]);p=0xe+(E[0x08][0X06]((F+F==F and F or p)+p,(F)));else if p==0X51_ then l+=f;p=-4294918020+(E[8][0B101_1]((E[0B1000][0B1001](p))-F-p,(F)));else if p~=0X7c then else z[n]=(l);p=-4294967240+(E[0X008][0X8]((F+p>F and p or F)>F and F or p));end;end;end;end;I=r[n];H=H[I];l[f]=H;;;;;;;;"
+  },
+  {
+    "opcode": 13,
+    "mnemonic": "OP_13",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "v[M[n]][a[r[n]]]=w[n];;;;;;;"
+  },
+  {
+    "opcode": 14,
+    "mnemonic": "OP_14",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "I=I[J];H=H[I];l[f]=(H);;;;;;;;"
+  },
+  {
+    "opcode": 15,
+    "mnemonic": "MICRO_STORE",
+    "description": "micro-state: l[f] = H",
+    "t23_count": 10,
+    "raw_handler": "(l)[f]=H;;;;;;;;"
+  },
+  {
+    "opcode": 16,
+    "mnemonic": "JMP_IF_NOT_LE_RR",
+    "description": "if not (R[r] <= R[M]) jump g+1",
+    "t23_count": 1,
+    "raw_handler": "if not(a[r[n]]<=a[M[n]])then n=(g[n]);end;;;;;;;;"
+  },
+  {
+    "opcode": 17,
+    "mnemonic": "OP_17",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[r[n]]=w[n]*a[M[n]];;;;;;;;"
+  },
+  {
+    "opcode": 18,
+    "mnemonic": "LT_KK",
+    "description": "R[r] = (A < w)",
+    "t23_count": 1,
+    "raw_handler": "a[r[n]]=A[n]<w[n];;;;;;;;"
+  },
+  {
+    "opcode": 19,
+    "mnemonic": "HELPER_BINOP",
+    "description": "R[M] = E[11](R[g], R[r])",
+    "t23_count": 0,
+    "raw_handler": "a[M[n]]=(E[0xb](a[g[n]],a[r[n]]));;;;;;;;"
+  },
+  {
+    "opcode": 20,
+    "mnemonic": "OP_20",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=(l[f]);;;;;;;"
+  },
+  {
+    "opcode": 21,
+    "mnemonic": "OP_21",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[M[n]]=(a[r[n]]*a[g[n]]);;;;;;;"
+  },
+  {
+    "opcode": 22,
+    "mnemonic": "SETTABLE_RK",
+    "description": "R[M][w] = R[r]",
+    "t23_count": 237,
+    "raw_handler": "(a[M[n]])[w[n]]=(a[r[n]]);;;;;;;"
+  },
+  {
+    "opcode": 23,
+    "mnemonic": "OP_23",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(v[g[n]])[a[r[n]]]=(a[M[n]]);;;;;;;;"
+  },
+  {
+    "opcode": 24,
+    "mnemonic": "OP_24",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "if not(not(a[g[n]]<a[r[n]]))then else n=M[n];end;;;;;;;;"
+  },
+  {
+    "opcode": 25,
+    "mnemonic": "OP_25",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=(w[n]<=G[n]);;;;;;;;"
+  },
+  {
+    "opcode": 26,
+    "mnemonic": "OP_26",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "J=3;I=(I[J]);;;;;;;;"
+  },
+  {
+    "opcode": 27,
+    "mnemonic": "RETURN0",
+    "description": "close open captures; return",
+    "t23_count": 1,
+    "raw_handler": "if b then for Q,o in b do if Q>=0X1 then o[3]=o;o[0x1]=(a[Q]);o[0B10]=0X1;b[Q]=nil;end;end;end;return;;;;;;;"
+  },
+  {
+    "opcode": 28,
+    "mnemonic": "MICRO_CALL_STORE",
+    "description": "micro-state: I=g; H=H(I); l[f]=H",
+    "t23_count": 1,
+    "raw_handler": "I=(g[n]);H=H(I);(l)[f]=H;;;;;;;;"
+  },
+  {
+    "opcode": 29,
+    "mnemonic": "SELFDECODE_29",
+    "description": "self-modifying superinstruction; rewrites z[pc]",
+    "t23_count": 0,
+    "raw_handler": "l=(nil);f=nil;H=0X55;repeat if H<0X55 then f=(0B0);break;else if not(H>0x30)then else l=(0X72);H=0X2f+(E[0X8][0B1100]((g[n]-F>H and M[n]or M[n])+M[n]));end;end;until false;I=(4503599627370495);J=(nil);H=0x45;while true do if H==0X45 then f*=I;I=E[0X8];H=0B100001_1+(E[0X8][7](((E[8][0B111](r[n],H,g[n]))<H and M[n]or r[n])<M[n]and g[n]or r[n],F));continue;else J=(0B101);break;end;end;I=I[J];p=(nil);L=(nil);H=(126);while true do if H<0X60 and H>0x45 then L=(E[0X8]);break;elseif H<0B1001001 and H>0X3F then p=0x7;H=0X5c+((r[n]-M[n]>=r[n]and r[n]or H)+g[n]-H);continue;else if H<63 then p=p[L];H=(0b110111__+((E[0b1000][0X7__](M[n]-H,H,r[n]))-r[n]<M[n]and H or H));continue;else if H>0X1__2 and H<0B1000101 then L=0b101;H=(-0xAa+(H-r[n]-M[n]+H+H));continue;else if H<0X7E and H>0X49 then J=J[p];p=(E[0X8]);H=(0x3A+(E[0X8][0X7]((E[8][0Xc]((E[0B100_0][0xD](H,r[n]))))-r[n])));else if H>96 then J=E[0X8];H=-4294967038+(E[0B01000][0x8_]((E[0X8][0x7](H+F,F,F))+F));end;end;end;end;end;end;e=(0x9);H=(0X33);repeat if H==0b1110110 then e=g[n];break;else if H==0b001100_11 then L=L[e];H=(-4294967125+(E[0X008][0b1000]((E[8][0Xd]((H>=H and H or F)+M[n],r[n])))));continue;end;end;until false;s=F;H=0X56;repeat if H==0B101011_0 then e+=s;H=0X24+(E[0X8][0X5]((E[0x8][0X7]((E[0X08][0X7](M[n]+H,r[n],F))))));else if H~=61 then else s=(z[n]);break;end;end;until false;e=(e<s);H=0X5E;repeat if H==0X25 then if not(not e)then else e=(r[n]);end;s=(M[n]);H=-4294966639+(E[0X8][0Xe]((E[0b1000][13](r[n],M[n]))-H-M[n],g[n]));continue;elseif H==0X4__0 then L=L(e,s);e=(M[n]);L-=e;H=0X1e+(E[0X8][0X9_]((E[0X8_][0X5]((E[8][0x00b](r[n],M[n]))))+F,M[n]));continue;elseif H==94 then if not(e)then else e=F;end;H=-0X5FfFffe9+((E[0X8][14](H-r[n]+F,(F)))-M[n]);else if H==0X1f then p=p(L);break;end;end;until false;L=(z[n]);p-=L;L=z[n];e=r[n];H=0X3f;while true do if H>20 then if not(H>0X3f_)then J=J(p,L,e);I=I(J);H=(-0Xb+(((H+H<F and g[n]or H)==M[n]and H or M[n])==H and H or F));continue;else if not(H>0X49)then l+=f;H=(-82+(H+F+r[n]+F-F));else l=a;f=g[n];break;end;end;else if H==0x14 then z[n]=(l);H=(0x5f+(E[0X8][0x9]((E[8][0X7](M[n]-r[n],H))-r[n],g[n])));else f+=I;H=-0X1F7+(E[8][11](((H~=H and M[n]or H)>=r[n]and H or F)+H,g[n]));end;end;end;I=a;J=(M[n]);H=0X07B;repeat if H>0X6_5 then I=(I[J]);H=152+(((E[0X8][0X0B](g[n]-F,(F)))>=H and M[n]or g[n])-H);elseif H<0X7B and H>0X1_E then p=(r[n]);H=-4294967292+((E[0X8][0X7](F-H+r[n],H,F))-M[n]);else if H<101 and H>0x0 then J=(a);H=(-4294967164+(E[0X8][0x9]((E[0X8][0X8]((E[0b1_000][0X7](H-H,H)))))));continue;else if not(H<0X1e)then else J=(J[p]);I=I==J;break;end;end;end;until false;l[f]=(I);;;;;;;;"
+  },
+  {
+    "opcode": 30,
+    "mnemonic": "MICRO_TOP_ADJUST",
+    "description": "micro-state: l -= f; top=l",
+    "t23_count": 1,
+    "raw_handler": "l-=f;C=(l);;;;;;;"
+  },
+  {
+    "opcode": 31,
+    "mnemonic": "OP_31",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "if not(G[n]<a[g[n]])then n=M[n];end;;;;;;;;"
+  },
+  {
+    "opcode": 32,
+    "mnemonic": "CALL1_1RET",
+    "description": "R[r] = R[r](R[r+1])",
+    "t23_count": 10,
+    "raw_handler": "l=(r[n]);a[l]=a[l](a[l+0b1__]);C=(l);;;;;;;;"
+  },
+  {
+    "opcode": 33,
+    "mnemonic": "OP_33",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=a;f=C;;;;;;;"
+  },
+  {
+    "opcode": 34,
+    "mnemonic": "NE_KK",
+    "description": "R[M] = (w ~= G)",
+    "t23_count": 2,
+    "raw_handler": "a[M[n]]=(w[n]~=G[n]);;;;;;;;"
+  },
+  {
+    "opcode": 35,
+    "mnemonic": "OP_35",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[r[n]]=v[M[n]][a[g[n]]];;;;;;;;"
+  },
+  {
+    "opcode": 36,
+    "mnemonic": "OP_36",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "if not(G[n]<=a[M[n]])then n=g[n];end;;;;;;;;"
+  },
+  {
+    "opcode": 37,
+    "mnemonic": "VM_LOAD_R_ARRAY",
+    "description": "R[r] = operand-r array",
+    "t23_count": 12,
+    "raw_handler": "(a)[r[n]]=r;;;;;;;;"
+  },
+  {
+    "opcode": 38,
+    "mnemonic": "OP_38",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[r[n]]=(w[n]>A[n]);;;;;;;;"
+  },
+  {
+    "opcode": 39,
+    "mnemonic": "MICRO_STORE_K",
+    "description": "micro-state: f=G; H=w; l[f]=H",
+    "t23_count": 10,
+    "raw_handler": "f=(G[n]);H=(w[n]);l[f]=H;;;;;;;;"
+  },
+  {
+    "opcode": 40,
+    "mnemonic": "RETURN_RANGE",
+    "description": "return register range g..g+M-1",
+    "t23_count": 1,
+    "raw_handler": "l=g[n];f=(M[n]);C=l+f-1;if not(b)then else for Q,o in b do if Q>=0B1 then(o)[0X3]=(o);o[0b1]=a[Q];o[0B10]=0X1;b[Q]=(nil);end;end;end;return true,l,f;;;;;;;"
+  },
+  {
+    "opcode": 41,
+    "mnemonic": "OP_41",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=(a);f=M[n];l=(l[f]);;;;;;;;"
+  },
+  {
+    "opcode": 42,
+    "mnemonic": "OP_42",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=(0X2);;;;;;;;"
+  },
+  {
+    "opcode": 43,
+    "mnemonic": "CLOSEUPVALS",
+    "description": "close captured registers >= r",
+    "t23_count": 4,
+    "raw_handler": "local Q=(r[n]);if b then for o,S in b do if not(o>=Q)then else S[0B11__]=S;(S)[0X1]=(a[o]);S[0B10]=0X1;b[o]=(nil);end;end;end;;;;;;;;"
+  },
+  {
+    "opcode": 44,
+    "mnemonic": "CALL_GENERIC",
+    "description": "generic call at base r; argc/result mode from M/g",
+    "t23_count": 4,
+    "raw_handler": "l=r[n];f=M[n];H=g[n];if f~=0x0 then C=(l+f-0X1);end;I,J=nil;if f~=0X1__ then I,J=E[0X3B](a[l](E[0X20](C,a,l+0b1)));else I,J=E[0B0111011](a[l]());end;if H~=0b1 then if H~=0x0 then I=l+H-0X2;C=(I+0B1);else I=I+l-1;C=(I);end;f=0x0;for Q=l,I do f+=0X1;(a)[Q]=J[f];end;else C=(l-0b1);end;;;;;;;;"
+  },
+  {
+    "opcode": 45,
+    "mnemonic": "OP_45",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=(g[n]);f=r[n];H=(a[l]);(E[0Xa])(a,l+0X1,C,f+0B1,H);;;;;;;;"
+  },
+  {
+    "opcode": 46,
+    "mnemonic": "OP_46",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[r[n]]=(a[g[n]]-a[M[n]]);;;;;;;;"
+  },
+  {
+    "opcode": 47,
+    "mnemonic": "MICRO_INIT_STORE",
+    "description": "micro-state: l=R; f=r; H=w",
+    "t23_count": 5,
+    "raw_handler": "l=a;f=(r[n]);H=w[n];;;;;;;"
+  },
+  {
+    "opcode": 48,
+    "mnemonic": "OP_48",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=a;;;;;;;;"
+  },
+  {
+    "opcode": 49,
+    "mnemonic": "CALL0_NORET",
+    "description": "R[r](); no results",
+    "t23_count": 6,
+    "raw_handler": "C=r[n];a[C]();C-=0X1;;;;;;;;"
+  },
+  {
+    "opcode": 50,
+    "mnemonic": "OP_50",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=(false);x+=W;if not(W<=0X0__0)then l=x<=N;else l=(x>=N);end;if l then a[g[n]+3]=(x);n=r[n];end;;;;;;;;"
+  },
+  {
+    "opcode": 51,
+    "mnemonic": "OP_51",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "f=M[n];;;;;;;;"
+  },
+  {
+    "opcode": 52,
+    "mnemonic": "CALL2_NORET",
+    "description": "R[M](R[M+1], R[M+2]); no results",
+    "t23_count": 115,
+    "raw_handler": "l=M[n];a[l](a[l+0X1],a[l+0X2]);C=l-0B1;;;;;;;;"
+  },
+  {
+    "opcode": 53,
+    "mnemonic": "OP_53",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=(M[n]);f,H,I=x();if f then a[l+0X1__]=(H);a[l+0X2]=I;n=(g[n]);end;;;;;;;;"
+  },
+  {
+    "opcode": 54,
+    "mnemonic": "MICRO_STATE",
+    "description": "micro-state: f=M; H=R; I=g",
+    "t23_count": 1,
+    "raw_handler": "f=M[n];H=a;I=(g[n]);;;;;;;"
+  },
+  {
+    "opcode": 55,
+    "mnemonic": "MICRO_CAPTURE_BASE",
+    "description": "micro-state: l=R; f=r; H=K(captures)",
+    "t23_count": 1,
+    "raw_handler": "l=(a);f=(r[n]);H=K;;;;;;;;"
+  },
+  {
+    "opcode": 56,
+    "mnemonic": "MICRO_TABLE_WALK",
+    "description": "micro-state: I=I[J]",
+    "t23_count": 3,
+    "raw_handler": "I=I[J];;;;;;;;"
+  },
+  {
+    "opcode": 57,
+    "mnemonic": "OP_57",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=(a);f=r[n];H=A[n];;;;;;;"
+  },
+  {
+    "opcode": 58,
+    "mnemonic": "NEWCLOSURE",
+    "description": "R[M] = closure(w) with capture descriptors w[5]",
+    "t23_count": 351,
+    "raw_handler": "l=w[n];f=l[0x5];H=(#f);I=H>0X0 and{};J=__APP_CLOSURE_CAPTURE(E[0x3C],l,I);(E[0B10110])(J,K);a[M[n]]=J;if not(I)then else for Q=0X1,H do J=f[Q];l=J[3];p=(J[2]);if l==0B0 then if not b then b=({});end;L=b[p];if not(not L)then else L=({[3]=a,[0b10]=p});b[p]=(L);end;(I)[Q-0X1]=(L);else if l~=0x1 then I[Q-0b1]=v[p];else(I)[Q-1]=(a[p]);end;end;end;end;;;;;;;;"
+  },
+  {
+    "opcode": 59,
+    "mnemonic": "OP_59",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "f=(r[n]);H=K;I=(A[n]);;;;;;;;"
+  },
+  {
+    "opcode": 60,
+    "mnemonic": "GETUPVAL_K",
+    "description": "R[r] = captures[A]",
+    "t23_count": 88,
+    "raw_handler": "(a)[r[n]]=(K[A[n]]);;;;;;"
+  },
+  {
+    "opcode": 61,
+    "mnemonic": "LOADNIL_RANGE",
+    "description": "for q=g..M: R[q]=nil",
+    "t23_count": 50,
+    "raw_handler": "for Q=g[n],M[n]do a[Q]=nil;end;;;;;;;"
+  },
+  {
+    "opcode": 62,
+    "mnemonic": "OP_62",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[g[n]]=(E[0B1011](a[M[n]],G[n]));;;;;;;"
+  },
+  {
+    "opcode": 63,
+    "mnemonic": "OP_63",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "I=I[J];f[H]=(I);;;;;;;;"
+  },
+  {
+    "opcode": 64,
+    "mnemonic": "MICRO_ADD",
+    "description": "micro-state: H=A; I=w; H+=I",
+    "t23_count": 2,
+    "raw_handler": "H=A[n];I=(w[n]);H+=I;;;;;;;;"
+  },
+  {
+    "opcode": 65,
+    "mnemonic": "RETURN1",
+    "description": "close captures; return R[r]",
+    "t23_count": 1,
+    "raw_handler": "if b then for Q,o in b do if Q>=0X1 then(o)[0X3]=(o);o[1]=(a[Q]);o[0X2__]=0X1;b[Q]=nil;end;end;end;return true,r[n],1;;;;;;;;"
+  },
+  {
+    "opcode": 66,
+    "mnemonic": "OP_66",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=(r[n]);;;;;;;;"
+  },
+  {
+    "opcode": 67,
+    "mnemonic": "MICRO_STATE",
+    "description": "micro-state: l=R; f=M; H=R",
+    "t23_count": 3,
+    "raw_handler": "l=a;f=M[n];H=a;;;;;;;"
+  },
+  {
+    "opcode": 68,
+    "mnemonic": "OP_68",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "H=H[I];I=(a);;;;;;;;"
+  },
+  {
+    "opcode": 69,
+    "mnemonic": "JMP_IF_NOT_LT_RK",
+    "description": "if not (R[M] < w) jump r+1",
+    "t23_count": 2,
+    "raw_handler": "if not(a[M[n]]<w[n])then n=r[n];end;;;;;;;;"
+  },
+  {
+    "opcode": 70,
+    "mnemonic": "LE_RK",
+    "description": "R[g] = (R[r] <= A)",
+    "t23_count": 1,
+    "raw_handler": "(a)[g[n]]=(a[r[n]]<=A[n]);;;;;;;;"
+  },
+  {
+    "opcode": 71,
+    "mnemonic": "JMP_IF_FALSY",
+    "description": "if not R[r] jump M+1",
+    "t23_count": 20,
+    "raw_handler": "if not(not a[r[n]])then else n=(M[n]);end;;;;;;;;"
+  },
+  {
+    "opcode": 72,
+    "mnemonic": "MICRO_HELPER_BASE",
+    "description": "micro-state: l=R; f=M; H=E[18]",
+    "t23_count": 2,
+    "raw_handler": "l=a;f=(M[n]);H=E[0x12];;;;;;;;"
+  },
+  {
+    "opcode": 73,
+    "mnemonic": "OP_73",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[r[n]]=not a[g[n]];;;;;;;;"
+  },
+  {
+    "opcode": 74,
+    "mnemonic": "OP_74",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[r[n]]=(a[M[n]]%a[g[n]]);;;;;;"
+  },
+  {
+    "opcode": 75,
+    "mnemonic": "JMP_IF_EQ_RK",
+    "description": "if R[r] == w jump M+1",
+    "t23_count": 2,
+    "raw_handler": "if a[r[n]]==w[n]then n=(M[n]);end;;;;;;;"
+  },
+  {
+    "opcode": 76,
+    "mnemonic": "OP_76",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "if b then for K,Q in b do if K>=1 then(Q)[0B11_]=(Q);Q[0X1]=a[K];Q[2]=(0x1);b[K]=nil;end;end;end;return true,M[n],0X0;;;;;;;"
+  },
+  {
+    "opcode": 77,
+    "mnemonic": "NOP",
+    "description": "no operation",
+    "t23_count": 1,
+    "raw_handler": ";;;;;;"
+  },
+  {
+    "opcode": 78,
+    "mnemonic": "OP_78",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[M[n]]=(a[g[n]]//a[r[n]]);;;;;;;"
+  },
+  {
+    "opcode": 79,
+    "mnemonic": "VARARG_COPY",
+    "description": "copy input varargs B[1..r] to R",
+    "t23_count": 0,
+    "raw_handler": "for K=0b1_,r[n]do(a)[K]=B[K];end;;;;;;;"
+  },
+  {
+    "opcode": 80,
+    "mnemonic": "OP_80",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[r[n]][a[M[n]]]=(w[n]);;;;;;;"
+  },
+  {
+    "opcode": 81,
+    "mnemonic": "VM_LOAD_M_ARRAY",
+    "description": "R[M] = operand-M array",
+    "t23_count": 49,
+    "raw_handler": "(a)[M[n]]=M;;;;;;;"
+  },
+  {
+    "opcode": 82,
+    "mnemonic": "SETUPVAL_K",
+    "description": "write A through capture cell v[r]",
+    "t23_count": 1,
+    "raw_handler": "l=v[r[n]];(l[0B11])[l[0B10]]=(A[n]);;;;;;;;"
+  },
+  {
+    "opcode": 83,
+    "mnemonic": "OP_83",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "V={[0X2]=N,[0B11]=x,[0B1]=V,[0B101]=W};C=M[n];l=E[0x2_F](function(...)(E[0X1E])();for Q,o in...do E[30](true,Q,o);end;end);l(a[C],a[C+0X1],a[C+0x02]);x=l;n=g[n];;;;;;;;"
+  },
+  {
+    "opcode": 84,
+    "mnemonic": "MICRO_REGS",
+    "description": "micro-state: l=R",
+    "t23_count": 13,
+    "raw_handler": "l=(a);;;;;;;;"
+  },
+  {
+    "opcode": 85,
+    "mnemonic": "MICRO_STORE",
+    "description": "micro-state: l[f]=H",
+    "t23_count": 2,
+    "raw_handler": "l[f]=(H);;;;;;;;"
+  },
+  {
+    "opcode": 86,
+    "mnemonic": "OP_86",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=(a[r[n]]/a[g[n]]);;;;;;;;"
+  },
+  {
+    "opcode": 87,
+    "mnemonic": "OP_87",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[r[n]]=(a[M[n]]>w[n]);;;;;;;;"
+  },
+  {
+    "opcode": 88,
+    "mnemonic": "LOADNIL_RANGE_2",
+    "description": "for q=g..M: R[q]=nil",
+    "t23_count": 2,
+    "raw_handler": "l=(g[n]);f=(M[n]);for Q=l,f do H=a;I=Q;Q=nil;(H)[I]=Q;end;;;;;;;"
+  },
+  {
+    "opcode": 89,
+    "mnemonic": "ADD_KR",
+    "description": "R[M] = G + R[g]",
+    "t23_count": 25,
+    "raw_handler": "(a)[M[n]]=G[n]+a[g[n]];;;;;;;;"
+  },
+  {
+    "opcode": 90,
+    "mnemonic": "MICRO_TABLE_WALK_STORE",
+    "description": "micro-state: I=r; H=H[I]; l[f]=H",
+    "t23_count": 6,
+    "raw_handler": "I=r[n];H=H[I];(l)[f]=H;;;;;;;;"
+  },
+  {
+    "opcode": 91,
+    "mnemonic": "OP_91",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "if not(w[n]<a[M[n]])then else n=(r[n]);end;;;;;;;;"
+  },
+  {
+    "opcode": 92,
+    "mnemonic": "OP_92",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[r[n]]=(a[g[n]]>=A[n]);;;;;;;;"
+  },
+  {
+    "opcode": 93,
+    "mnemonic": "OP_93",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[M[n]]=a[g[n]]~=G[n];;;;;;;;"
+  },
+  {
+    "opcode": 94,
+    "mnemonic": "MICRO_TABLE_WALK",
+    "description": "micro-state: f=f[H]; H=R; I=M",
+    "t23_count": 3,
+    "raw_handler": "f=(f[H]);H=(a);I=(M[n]);;;;;;;;"
+  },
+  {
+    "opcode": 95,
+    "mnemonic": "LOADK",
+    "description": "R[r] = w",
+    "t23_count": 259,
+    "raw_handler": "(a)[r[n]]=w[n];;;;;;;"
+  },
+  {
+    "opcode": 96,
+    "mnemonic": "OP_96",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "H=w[n];I=(G[n]);;;;;;;;"
+  },
+  {
+    "opcode": 97,
+    "mnemonic": "CALL1_NORET",
+    "description": "R[g](R[g+1]); no results",
+    "t23_count": 7,
+    "raw_handler": "l=g[n];a[l](a[l+0b1]);C=(l-0b1);;;;;;;;"
+  },
+  {
+    "opcode": 98,
+    "mnemonic": "MICRO_STATE",
+    "description": "micro-state: f=g; H=R",
+    "t23_count": 0,
+    "raw_handler": "f=g[n];H=(a);;;;;;;;"
+  },
+  {
+    "opcode": 99,
+    "mnemonic": "OP_99",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "E[0B1000][M[n]]=(a[g[n]]);;;;;;;;"
+  },
+  {
+    "opcode": 100,
+    "mnemonic": "OP_100",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "v[M[n]][w[n]]=a[r[n]];;;;;;;;"
+  },
+  {
+    "opcode": 101,
+    "mnemonic": "JMP_IF_NE_RK",
+    "description": "if R[g] ~= A jump r+1",
+    "t23_count": 5,
+    "raw_handler": "if a[g[n]]~=A[n]then n=(r[n]);end;;;;;;;;"
+  },
+  {
+    "opcode": 102,
+    "mnemonic": "OP_102",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=g[n];(a)[l]=a[l](E[32](C,a,l+0B1));C=l;;;;;;;"
+  },
+  {
+    "opcode": 103,
+    "mnemonic": "MICRO_INIT",
+    "description": "micro-state: l=R; f=r",
+    "t23_count": 2,
+    "raw_handler": "l=(a);f=(r[n]);;;;;;;;"
+  },
+  {
+    "opcode": 104,
+    "mnemonic": "OP_104",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "f=(l);H=(3);f=f[H];;;;;;;;"
+  },
+  {
+    "opcode": 105,
+    "mnemonic": "JMP_IF_LE_RK",
+    "description": "if R[r] <= w jump M+1",
+    "t23_count": 1,
+    "raw_handler": "if not(a[r[n]]<=w[n])then else n=(M[n]);end;;;;;;;"
+  },
+  {
+    "opcode": 106,
+    "mnemonic": "GETUPVAL_DIRECT",
+    "description": "R[g] = upvalues[M] (0-based capture array)",
+    "t23_count": 0,
+    "raw_handler": "a[g[n]]=(v[M[n]]);;;;;;;"
+  },
+  {
+    "opcode": 107,
+    "mnemonic": "OP_107",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=(a[g[n]]-G[n]);;;;;;;;"
+  },
+  {
+    "opcode": 108,
+    "mnemonic": "GE_KK",
+    "description": "R[r] = (A >= w)",
+    "t23_count": 4,
+    "raw_handler": "(a)[r[n]]=(A[n]>=w[n]);;;;;;;;"
+  },
+  {
+    "opcode": 109,
+    "mnemonic": "OP_109",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "H=(H[I]);I=(w[n]);H=H[I];;;;;;;"
+  },
+  {
+    "opcode": 110,
+    "mnemonic": "OP_110",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=(l[f]);f=(a);;;;;;;;"
+  },
+  {
+    "opcode": 111,
+    "mnemonic": "MICRO_ADD_STORE",
+    "description": "micro-state: H+=I; l[f]=H",
+    "t23_count": 1,
+    "raw_handler": "H+=I;(l)[f]=(H);;;;;;;;"
+  },
+  {
+    "opcode": 112,
+    "mnemonic": "OP_112",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=(g[n]);a[l](E[0x20](C,a,l+0x1));C=l-0X1;;;;;;;"
+  },
+  {
+    "opcode": 113,
+    "mnemonic": "MICRO_STATE",
+    "description": "micro-state: f=g; H=R; I=M",
+    "t23_count": 2,
+    "raw_handler": "f=g[n];H=a;I=M[n];;;;;;;;"
+  },
+  {
+    "opcode": 114,
+    "mnemonic": "OP_114",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[g[n]]=a[M[n]]==a[r[n]];;;;;;;;"
+  },
+  {
+    "opcode": 115,
+    "mnemonic": "OP_115",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "H=a;I=r[n];H=(H[I]);;;;;;;"
+  },
+  {
+    "opcode": 116,
+    "mnemonic": "CONCAT_KR",
+    "description": "R[r] = w .. R[M]",
+    "t23_count": 3,
+    "raw_handler": "(a)[r[n]]=(w[n]..a[M[n]]);;;;;;;;"
+  },
+  {
+    "opcode": 117,
+    "mnemonic": "ADD_KK",
+    "description": "R[r] = A + w",
+    "t23_count": 10,
+    "raw_handler": "(a)[r[n]]=(A[n]+w[n]);;;;;;;;"
+  },
+  {
+    "opcode": 118,
+    "mnemonic": "CALL_FIXED_1RET",
+    "description": "fixed/open-arg call at R[r], one result",
+    "t23_count": 18,
+    "raw_handler": "l=r[n];C=(l+M[n]-0b1);(a)[l]=a[l](E[0X20](C,a,l+0X1));C=l;;;;;;;;"
+  },
+  {
+    "opcode": 119,
+    "mnemonic": "NEWTABLE",
+    "description": "R[M] = {}",
+    "t23_count": 232,
+    "raw_handler": "a[M[n]]={};;;;;;;;"
+  },
+  {
+    "opcode": 120,
+    "mnemonic": "OP_120",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=v;f=(M[n]);;;;;;;;"
+  },
+  {
+    "opcode": 121,
+    "mnemonic": "OP_121",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "if not(a[g[n]]<a[r[n]])then else n=M[n];end;;;;;;;;"
+  },
+  {
+    "opcode": 122,
+    "mnemonic": "OP_122",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "H=a;;;;;;;"
+  },
+  {
+    "opcode": 123,
+    "mnemonic": "OP_123",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=(v[M[n]]);(a)[r[n]]=(l[0X3__][l[2]][w[n]]);;;;;;;;"
+  },
+  {
+    "opcode": 124,
+    "mnemonic": "OP_124",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "if b then for K,Q in b do if K>=0b1 then(Q)[0X3]=(Q);Q[0X1]=a[K];Q[0X2]=(0b1);(b)[K]=nil;end;end;end;return false,r[n],C;;;;;;;;"
+  },
+  {
+    "opcode": 125,
+    "mnemonic": "MICRO_STATE",
+    "description": "micro-state: H=R; I=g",
+    "t23_count": 1,
+    "raw_handler": "H=(a);I=(g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 126,
+    "mnemonic": "MICRO_CONST",
+    "description": "micro-state: I=w",
+    "t23_count": 1,
+    "raw_handler": "I=(w[n]);;;;;;;;"
+  },
+  {
+    "opcode": 127,
+    "mnemonic": "OP_127",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=r[n];f=0;for K=l,l+(M[n]-1)do(a)[K]=B[j+f];f+=0X1;end;;;;;;;;"
+  },
+  {
+    "opcode": 128,
+    "mnemonic": "MICRO_STATE",
+    "description": "micro-state: f=R; H=r",
+    "t23_count": 3,
+    "raw_handler": "f=a;H=(r[n]);;;;;;;;"
+  },
+  {
+    "opcode": 129,
+    "mnemonic": "SETTABLE_KK",
+    "description": "R[M][G] = w",
+    "t23_count": 940,
+    "raw_handler": "(a[M[n]])[G[n]]=(w[n]);;;;;;;"
+  },
+  {
+    "opcode": 130,
+    "mnemonic": "OP_130",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "C=(l);;;;;;;;"
+  },
+  {
+    "opcode": 131,
+    "mnemonic": "MICRO_TABLE_WALK",
+    "description": "micro-state: l=l[f]",
+    "t23_count": 10,
+    "raw_handler": "l=(l[f]);;;;;;;;"
+  },
+  {
+    "opcode": 132,
+    "mnemonic": "OP_132",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=(v[M[n]]);(l[0x3])[l[0x2]]=(a[g[n]]);;;;;;;;"
+  },
+  {
+    "opcode": 133,
+    "mnemonic": "EQ_RK",
+    "description": "R[g] = (R[M] == G)",
+    "t23_count": 2,
+    "raw_handler": "(a)[g[n]]=(a[M[n]]==G[n]);;;;;;;;"
+  },
+  {
+    "opcode": 134,
+    "mnemonic": "MICRO_TABLE_WALK_STORE",
+    "description": "micro-state: H=H[I]; l[f]=H",
+    "t23_count": 4,
+    "raw_handler": "H=H[I];(l)[f]=(H);;;;;;;;"
+  },
+  {
+    "opcode": 135,
+    "mnemonic": "LOADNIL",
+    "description": "R[M] = nil",
+    "t23_count": 2,
+    "raw_handler": "(a)[M[n]]=(nil);;;;;;;;"
+  },
+  {
+    "opcode": 136,
+    "mnemonic": "OP_136",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[r[n]]=(a[g[n]]<a[M[n]]);;;;;;;"
+  },
+  {
+    "opcode": 137,
+    "mnemonic": "OP_137",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "H=(G[n]);I=a;J=(g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 138,
+    "mnemonic": "OP_138",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=v[r[n]];(l[3][l[0B10]])[a[M[n]]]=(a[g[n]]);;;;;;;;"
+  },
+  {
+    "opcode": 139,
+    "mnemonic": "MICRO_STATE",
+    "description": "micro-state: H=w; I=A",
+    "t23_count": 1,
+    "raw_handler": "H=(w[n]);I=(A[n]);;;;;;;;"
+  },
+  {
+    "opcode": 140,
+    "mnemonic": "OP_140",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "I=(M[n]);H=(H[I]);;;;;;;;"
+  },
+  {
+    "opcode": 141,
+    "mnemonic": "OP_141",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "f=(w[n]);;;;;;;;"
+  },
+  {
+    "opcode": 142,
+    "mnemonic": "CALL_FIXED_NORET",
+    "description": "fixed-arg call at R[r]; no results",
+    "t23_count": 10,
+    "raw_handler": "l=r[n];C=l+M[n]-1;a[l](E[32](C,a,l+0X1));C=(l-1);;;;;;;;"
+  },
+  {
+    "opcode": 143,
+    "mnemonic": "OP_143",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[r[n]]=(a[M[n]]~=a[g[n]]);;;;;;;"
+  },
+  {
+    "opcode": 144,
+    "mnemonic": "OP_144",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=(v);f=M[n];l=(l[f]);;;;;;;;"
+  },
+  {
+    "opcode": 145,
+    "mnemonic": "OP_145",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "f=r[n];H=w[n];l[f]=H;;;;;;;;"
+  },
+  {
+    "opcode": 146,
+    "mnemonic": "GETUPVAL_CELL",
+    "description": "R[M] = dereference capture cell upvalues[g]",
+    "t23_count": 0,
+    "raw_handler": "l=v[g[n]];(a)[M[n]]=l[0B1_1][l[0X2]];;;;;;;;"
+  },
+  {
+    "opcode": 147,
+    "mnemonic": "JMP_IF_TRUTHY",
+    "description": "if R[g] jump r+1",
+    "t23_count": 16,
+    "raw_handler": "if a[g[n]]then n=(r[n]);end;;;;;;;;"
+  },
+  {
+    "opcode": 148,
+    "mnemonic": "CONCAT_RK",
+    "description": "R[M] = R[g] .. G",
+    "t23_count": 1,
+    "raw_handler": "(a)[M[n]]=a[g[n]]..G[n];;;;;;;;"
+  },
+  {
+    "opcode": 149,
+    "mnemonic": "SELFDECODE_149",
+    "description": "self-modifying decoder; rewrites current instruction arrays",
+    "t23_count": 19,
+    "raw_handler": "l=nil;f=nil;H=nil;I=(0B1010);while true do if I<0b001__100001 and I>10 then H=g[n];break;elseif I>76 then f=(a);I=-0X138+(E[8][0X7]((E[0B1000][11]((E[0X8][0x8](F))>=F and I or I,(E[8][0xF](\"\\x3Ei8\",\"\\u{00}\\z  \\0\\0\\0\\x00\\0\\0\\2\"))))));continue;else if not(I<76)then else l=(r[n]);I=-76+((E[0X8][0X5](F))+I-I+F);end;end;end;f=f[H];J=nil;p=nil;I=0XB;repeat if I>0xb and I<0x75 then J=(0);p=4503599627370495;I=-0X1298B+(E[8][0Xd]((E[8][12]((E[0X8][0X7](F,F,I))))+F,(23)));continue;elseif I>0X6e then J*=p;break;else if I<0B1101110 then H=0X0;I=0x6__3+(E[8][0B1100]((E[8][11]((E[0B1000][0XA](F+I,I)),(I)))));end;end;until false;p=E[0x8];L=(nil);e=nil;I=(40);repeat if I==0X28 then L=0b101;I=(0X17+(((E[0B1000][13](F+I,(0x5)))~=F and I or F)+I));continue;else if I==0x1a then L=E[8];e=14;break;else if I~=0X67 then else p=(p[L]);I=-624951270+(E[8][14]((E[8][11]((E[0X8][0X9](I,I)),(0x0F)))>=I and F or F,(22)));continue;end;end;end;until false;L=(L[e]);e=E[0X8];s=(nil);k=nil;I=(105);while true do if I<0X69__ then s=E[0B001000];k=0x7;break;else if not(I>0X34)then else s=0b1101;e=e[s];I=0X34+(E[0X8][11]((E[0X8][0B110]((E[0X8][0X9](I-F,I,F)),(0B111__10))),(0XA)));continue;end;end;end;I=(0B1010__111);while true do if I==0B1001010 then k=(z[n]);break;else s=(s[k]);I=-0X223+(I+F+I+F+F);continue;end;end;D=F;i=nil;I=(4);while true do if I==0x78 then if s then s=(F);end;if not(not s)then else s=F;end;break;elseif I==19 then s=s(k,D,i);I=(514+((F<I and F or I)-F-F-F));elseif I==0B1010110 then k=z[n];I=(-4294967234+((E[0X8][0X8](I-I))-F+F));elseif I==0X3d then s=(s<k);I=(-4294967053+(E[0b1000][0B1000_]((E[8][8]((E[0B10_00][0b1000](I))))+I)));continue;else if I~=0B10__0 then else i=(F);I=(-4294967276+((E[0X8][0B100__0]((E[0B1000][0B111](I))>=F and F or I))+I));end;end;end;k=(0B01__0100_);I=0B11111;while true do if I==0X0029 then e=e~=s;I=(-0B1001001+(E[0B1000][0x7_]((I-F==F and F or I)==F and F or I,F,I)));continue;elseif I==116 then if e then e=F;end;break;elseif I==0b11_111 then e=e(s,k);I=(381+(((E[8][0X9](F,F,I))<I and I or F)-F-F));else if I~=0X72 then else s=(z[n]);I=(-3758097252+((E[0X8][0Xd]((E[0x8][0X6]((E[0B1000][0b1000](F)),(0x13))),(0B11)))-I));continue;end;end;end;I=0x72;repeat if not(I>=0B1110010)then s=(z[n]);break;else if not e then e=F;end;I=-0X6C+((I-F<F and F or F)+F-F);end;until false;e=(e<=s);I=0b110010;while true do if I<=0B11_0010 then if not(e)then else e=(F);end;I=-243+((E[0X8][0X8_]((E[0X8][0B1000](F+F))))+I);else if I==0X34 then s=(F);e+=s;s=(0X0e);break;else if not(not e)then else e=F;end;I=(-0X7c+((E[0B1_000][0X5]((E[0X8][0B101](I+I))))+F));end;end;end;I=14;while true do if I==0B01110 then L=L(e,s);I=(-4294754268+((E[0B1000][0X0e](F-I-F,(I)))-I));else if I~=0X15 then else p=p(L);break;end;end;end;J+=p;I=(0X58);repeat if I==0b1011000 then H+=J;I=-0X1e+((E[0x8][0X0a](F-F<=I and F or F,I))-I);continue;else if I==0B1010111 then z[n]=(H);break;end;end;until false;H=a;I=0x32;while true do if I>0X34__ then J+=p;I=(0X033+(E[0x8][9](F-F+I<I and F or I,F,I)));continue;elseif I>0X32 and I<0b1101001 then p=f;I=-0b10011001_+(I+I+I-I+I);else if I<0X32 then H[J]=p;break;else if I>0X3 and I<52 then J=l;p=0X1;I=(-0x6_E+((E[0X8][0B1010]((E[0B1000][0Xc](I+I)),I,F))+I));continue;end;end;end;end;I=(0B1110001);repeat if I==0B11__100 then L=(A[n]);break;else if I==0X7__1 then H=(a);J=l;p=f;I=(-76260+(E[0X8][0XB_]((E[0X8][0Xa]((E[0X8][14]((E[8][0Xb](F,(0X9))),(0x1E))))),(0X2))));continue;end;end;until false;I=0B1000111;repeat if I==0x7a then H[J]=(p);break;else if I~=0B1000111 then else p=(p[L]);I=-0b11110111+((E[0X8][0Xa](I,I))+F+F+I);continue;end;end;until false;;;;;;;;"
+  },
+  {
+    "opcode": 150,
+    "mnemonic": "OP_150",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "if a[g[n]]~=a[M[n]]then else n=r[n];end;;;;;;;"
+  },
+  {
+    "opcode": 151,
+    "mnemonic": "RETURN2",
+    "description": "close captures; return two values from R[r]",
+    "t23_count": 1,
+    "raw_handler": "if not(b)then else for K,e in b do if not(K>=0X1)then else e[0B11]=(e);(e)[1]=(a[K]);(e)[0B10]=(1);b[K]=nil;end;end;end;l=(r[n]);C=(l+0x1);return true,l,0X02;;;;;;;;"
+  },
+  {
+    "opcode": 152,
+    "mnemonic": "OP_152",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[g[n]]=a[M[n]]<G[n];;;;;;;;"
+  },
+  {
+    "opcode": 153,
+    "mnemonic": "OP_153",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "if not(a[M[n]]<w[n])then else n=r[n];end;;;;;;;;"
+  },
+  {
+    "opcode": 154,
+    "mnemonic": "OP_154",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "H=(M[n]);I=l;;;;;;;;"
+  },
+  {
+    "opcode": 155,
+    "mnemonic": "GETTABLE_K",
+    "description": "R[g] = R[M][G]",
+    "t23_count": 83,
+    "raw_handler": "(a)[g[n]]=a[M[n]][G[n]];;;;;;;;"
+  },
+  {
+    "opcode": 156,
+    "mnemonic": "OP_156",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "H=H<=I;(l)[f]=H;;;;;;;;"
+  },
+  {
+    "opcode": 157,
+    "mnemonic": "OP_157",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[r[n]]=a[M[n]]..a[g[n]];;;;;;;"
+  },
+  {
+    "opcode": 158,
+    "mnemonic": "OP_158",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[g[n]]=(a[M[n]]*G[n]);;;;;;;;"
+  },
+  {
+    "opcode": 159,
+    "mnemonic": "OP_159",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=a;f=(M[n]);;;;;;;;"
+  },
+  {
+    "opcode": 160,
+    "mnemonic": "OP_160",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "x=(V[3]);N=(V[2]);W=V[0X5];V=(V[0B1]);;;;;;;;"
+  },
+  {
+    "opcode": 161,
+    "mnemonic": "OP_161",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=g[n];f=M[n];for K=l,f do H=(a);I=(K);K=nil;H[I]=(K);end;;;;;;;;"
+  },
+  {
+    "opcode": 162,
+    "mnemonic": "SETTABLE_RR",
+    "description": "R[g][R[r]] = R[M]",
+    "t23_count": 94,
+    "raw_handler": "(a[g[n]])[a[r[n]]]=(a[M[n]]);;;;;;;;"
+  },
+  {
+    "opcode": 163,
+    "mnemonic": "VM_LOAD_G_ARRAY",
+    "description": "R[r] = operand-g array",
+    "t23_count": 7,
+    "raw_handler": "(a)[r[n]]=g;;;;;;;;"
+  },
+  {
+    "opcode": 164,
+    "mnemonic": "OP_164",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[M[n]]=(-a[r[n]]);;;;;;;"
+  },
+  {
+    "opcode": 165,
+    "mnemonic": "OP_165",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[r[n]]=(a);;;;;;;;"
+  },
+  {
+    "opcode": 166,
+    "mnemonic": "MICRO_UPVALUES",
+    "description": "micro-state: l=upvalues; f=g",
+    "t23_count": 1,
+    "raw_handler": "l=v;f=g[n];;;;;;;;"
+  },
+  {
+    "opcode": 167,
+    "mnemonic": "MICRO_TABLE_WALK",
+    "description": "micro-state: H=H[I]",
+    "t23_count": 4,
+    "raw_handler": "H=(H[I]);;;;;;;"
+  },
+  {
+    "opcode": 168,
+    "mnemonic": "ARG_BIND",
+    "description": "copy first g input arguments into R[1..g]",
+    "t23_count": 0,
+    "raw_handler": "P=g[n];for d=0X1,P do a[d]=(B[d]);end;j=(P+0X1);;;;;;;;"
+  },
+  {
+    "opcode": 169,
+    "mnemonic": "MICRO_ONE",
+    "description": "micro-state: f=1",
+    "t23_count": 1,
+    "raw_handler": "f=1;;;;;;;;"
+  },
+  {
+    "opcode": 170,
+    "mnemonic": "OP_170",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(v[r[n]])[w[n]]=(A[n]);;;;;;;"
+  },
+  {
+    "opcode": 171,
+    "mnemonic": "OP_171",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "if a[g[n]]==a[r[n]]then else n=M[n];end;;;;;;;;"
+  },
+  {
+    "opcode": 172,
+    "mnemonic": "OP_172",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(f)[H]=(l);;;;;;;;"
+  },
+  {
+    "opcode": 173,
+    "mnemonic": "MICRO_SUB_STORE",
+    "description": "micro-state: H-=I; l[f]=H",
+    "t23_count": 2,
+    "raw_handler": "H-=I;l[f]=(H);;;;;;;;"
+  },
+  {
+    "opcode": 174,
+    "mnemonic": "OP_174",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[r[n]]=(E[0B1000][M[n]]);;;;;;;;"
+  },
+  {
+    "opcode": 175,
+    "mnemonic": "CALL0_1RET",
+    "description": "R[g] = R[g]()",
+    "t23_count": 8,
+    "raw_handler": "C=g[n];a[C]=a[C]();;;;;;;;"
+  },
+  {
+    "opcode": 176,
+    "mnemonic": "OP_176",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[r[n]]=#a[M[n]];;;;;;;;"
+  },
+  {
+    "opcode": 177,
+    "mnemonic": "MICRO_STATE",
+    "description": "micro-state: l=R; f=M",
+    "t23_count": 10,
+    "raw_handler": "l=a;f=(M[n]);;;;;;;"
+  },
+  {
+    "opcode": 178,
+    "mnemonic": "OP_178",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[M[n]]=(a[g[n]][a[r[n]]]);;;;;;;;"
+  },
+  {
+    "opcode": 179,
+    "mnemonic": "MICRO_ADD",
+    "description": "micro-state: H+=I",
+    "t23_count": 1,
+    "raw_handler": "H+=I;;;;;;;;"
+  },
+  {
+    "opcode": 180,
+    "mnemonic": "OP_180",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[g[n]]=a[M[n]]<=a[r[n]];;;;;;;;"
+  },
+  {
+    "opcode": 181,
+    "mnemonic": "OP_181",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=g[n];f=(h-P-0x1);if f<0x0 then f=-0B1;end;H=(0X0);for d=l,l+f do a[d]=(B[j+H]);H+=0b1;end;C=l+f;;;;;;;;"
+  },
+  {
+    "opcode": 182,
+    "mnemonic": "OP_182",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=v[M[n]];(a)[g[n]]=(l[0X3][l[0X2]][a[r[n]]]);;;;;;;;"
+  },
+  {
+    "opcode": 183,
+    "mnemonic": "OP_183",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "if not(a[r[n]]<=A[n])then n=(g[n]);end;;;;;;;;"
+  },
+  {
+    "opcode": 184,
+    "mnemonic": "MICRO_NEWTABLE_STORE",
+    "description": "micro-state: H={}; l[f]=H",
+    "t23_count": 4,
+    "raw_handler": "H=({});l[f]=H;;;;;;;"
+  },
+  {
+    "opcode": 185,
+    "mnemonic": "OP_185",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[g[n]]=a[M[n]]%G[n];;;;;;;;"
+  },
+  {
+    "opcode": 186,
+    "mnemonic": "OP_186",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "if b then for d,v in b do if d>=1 then(v)[0B11]=(v);v[0x1]=(a[d]);v[0B10]=1;(b)[d]=nil;end;end;end;l=(r[n]);return false,l,l;;;;;;;;"
+  },
+  {
+    "opcode": 187,
+    "mnemonic": "OP_187",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "f=(G[n]);;;;;;;"
+  },
+  {
+    "opcode": 188,
+    "mnemonic": "RETURN_RANGE_2",
+    "description": "close captures; return range r..r+M-2",
+    "t23_count": 0,
+    "raw_handler": "if not(b)then else for d,v in b do if not(d>=0B1)then else(v)[0B11]=(v);(v)[0X1]=a[d];(v)[0B10]=(0B1_);b[d]=nil;end;end;end;l=r[n];return false,l,l+M[n]-0b10;;;;;;;"
+  },
+  {
+    "opcode": 189,
+    "mnemonic": "MICRO_TABLE_WALK",
+    "description": "micro-state: l=R; f=g; l=l[f]",
+    "t23_count": 4,
+    "raw_handler": "l=a;f=(g[n]);l=(l[f]);;;;;;;;"
+  },
+  {
+    "opcode": 190,
+    "mnemonic": "OP_190",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "J=r[n];;;;;;;;"
+  },
+  {
+    "opcode": 191,
+    "mnemonic": "CALL2_1RET",
+    "description": "R[g] = R[g](R[g+1],R[g+2])",
+    "t23_count": 77,
+    "raw_handler": "l=g[n];(a)[l]=a[l](a[l+0B1],a[l+0X2]);C=l;;;;;;;"
+  },
+  {
+    "opcode": 192,
+    "mnemonic": "OP_192",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "H=w[n];(l)[f]=H;;;;;;;;"
+  },
+  {
+    "opcode": 193,
+    "mnemonic": "SETLIST",
+    "description": "copy register list into table at R[r]",
+    "t23_count": 12,
+    "raw_handler": "l=(r[n]);f=M[n];H=(a[l]);E[0XA](a,l+1,l+g[n],f+0x1,H);;;;;;;;"
+  },
+  {
+    "opcode": 194,
+    "mnemonic": "OP_194",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=d;;;;;;;;"
+  },
+  {
+    "opcode": 195,
+    "mnemonic": "MICRO_STATE",
+    "description": "micro-state: f=r",
+    "t23_count": 1,
+    "raw_handler": "f=(r[n]);;;;;;;;"
+  },
+  {
+    "opcode": 196,
+    "mnemonic": "OP_196",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "I=(G[n]);H=(H[I]);(l)[f]=H;;;;;;;;"
+  },
+  {
+    "opcode": 197,
+    "mnemonic": "OP_197",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=v[g[n]];(l[0X3][l[0x2]])[A[n]]=a[r[n]];;;;;;;;"
+  },
+  {
+    "opcode": 198,
+    "mnemonic": "JMP",
+    "description": "pc = M+1",
+    "t23_count": 733,
+    "raw_handler": "n=M[n];;;;;;;"
+  },
+  {
+    "opcode": 199,
+    "mnemonic": "GT_RR",
+    "description": "R[M] = (R[g] > R[r])",
+    "t23_count": 1,
+    "raw_handler": "(a)[M[n]]=(a[g[n]]>a[r[n]]);;;;;;;;"
+  },
+  {
+    "opcode": 200,
+    "mnemonic": "MICRO_TABLE_WALK",
+    "description": "micro-state: I=g; l=l[I]",
+    "t23_count": 1,
+    "raw_handler": "I=(g[n]);l=(l[I]);;;;;;;;"
+  },
+  {
+    "opcode": 201,
+    "mnemonic": "SUB_KK",
+    "description": "R[r] = w - A",
+    "t23_count": 5,
+    "raw_handler": "(a)[r[n]]=w[n]-A[n];;;;;;;;"
+  },
+  {
+    "opcode": 202,
+    "mnemonic": "OP_202",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "V={[0X2]=N,[0x3]=x,[0B1]=V,[5]=W};l=r[n];W=(a[l+0X0_02]+0X0);N=(a[l+1]+0B0);x=(a[l]-W);n=(g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 203,
+    "mnemonic": "EQ_KK",
+    "description": "R[M] = (G == w)",
+    "t23_count": 1,
+    "raw_handler": "a[M[n]]=G[n]==w[n];;;;;;;;"
+  },
+  {
+    "opcode": 204,
+    "mnemonic": "VM_LOAD_OPCODE_ARRAY",
+    "description": "R[g] = opcode array",
+    "t23_count": 23,
+    "raw_handler": "a[g[n]]=(z);;;;;;;;"
+  },
+  {
+    "opcode": 205,
+    "mnemonic": "OP_205",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "a[g[n]]=a[r[n]]/A[n];;;;;;;"
+  },
+  {
+    "opcode": 206,
+    "mnemonic": "GETUPVAL_TABLE_K",
+    "description": "R[r] = upvalues[M][w]",
+    "t23_count": 0,
+    "raw_handler": "(a)[r[n]]=(v[M[n]][w[n]]);;;;;;;;"
+  },
+  {
+    "opcode": 207,
+    "mnemonic": "OP_207",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "H=(v);I=M[n];;;;;;;;"
+  },
+  {
+    "opcode": 208,
+    "mnemonic": "OP_208",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[g[n]]=a[r[n]]+a[M[n]];;;;;;;;"
+  },
+  {
+    "opcode": 209,
+    "mnemonic": "MICRO_STATE",
+    "description": "micro-state: f=M",
+    "t23_count": 10,
+    "raw_handler": "f=(M[n]);;;;;;;;"
+  },
+  {
+    "opcode": 210,
+    "mnemonic": "MICRO_TABLE_WALK2",
+    "description": "micro-state: H=H[I]; I=G; H=H[I]",
+    "t23_count": 2,
+    "raw_handler": "H=H[I];I=(G[n]);H=(H[I]);;;;;;;;"
+  },
+  {
+    "opcode": 211,
+    "mnemonic": "OP_211",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(l)();l=(C);;;;;;;;"
+  },
+  {
+    "opcode": 212,
+    "mnemonic": "OP_212",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=(l[f]);f=(w[n]);;;;;;;"
+  },
+  {
+    "opcode": 213,
+    "mnemonic": "OP_213",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "l=(a);f=r[n];H=a;;;;;;;;"
+  },
+  {
+    "opcode": 214,
+    "mnemonic": "MICRO_TABLE_WALK",
+    "description": "micro-state: l=l[f]; f=w; H=R",
+    "t23_count": 6,
+    "raw_handler": "l=(l[f]);f=(w[n]);H=a;;;;;;;;"
+  },
+  {
+    "opcode": 215,
+    "mnemonic": "MOVE",
+    "description": "R[M] = R[r]",
+    "t23_count": 32,
+    "raw_handler": "(a)[M[n]]=(a[r[n]]);;;;;;;;"
+  },
+  {
+    "opcode": 216,
+    "mnemonic": "OP_216",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "H=H[l];l=(a);;;;;;;;"
+  },
+  {
+    "opcode": 217,
+    "mnemonic": "HELPER_LOAD",
+    "description": "R[M] = E[18](g)",
+    "t23_count": 11,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 218,
+    "mnemonic": "OP_218",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "J=l;l=(2);J=J[l];;;;;;;;"
+  },
+  {
+    "opcode": 219,
+    "mnemonic": "OP_219",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 220,
+    "mnemonic": "HELPER_LOAD",
+    "description": "R[M] = E[18](g)",
+    "t23_count": 1,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 221,
+    "mnemonic": "OP_221",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 222,
+    "mnemonic": "OP_222",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 223,
+    "mnemonic": "OP_223",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 224,
+    "mnemonic": "OP_224",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 225,
+    "mnemonic": "OP_225",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 226,
+    "mnemonic": "OP_226",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 227,
+    "mnemonic": "OP_227",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 228,
+    "mnemonic": "OP_228",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 229,
+    "mnemonic": "OP_229",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 230,
+    "mnemonic": "OP_230",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 231,
+    "mnemonic": "OP_231",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 232,
+    "mnemonic": "OP_232",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 233,
+    "mnemonic": "OP_233",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 234,
+    "mnemonic": "OP_234",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 235,
+    "mnemonic": "OP_235",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 236,
+    "mnemonic": "OP_236",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 237,
+    "mnemonic": "HELPER_LOAD",
+    "description": "R[M] = E[18](g)",
+    "t23_count": 2,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 238,
+    "mnemonic": "HELPER_LOAD",
+    "description": "R[M] = E[18](g)",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 239,
+    "mnemonic": "OP_239",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 240,
+    "mnemonic": "OP_240",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 241,
+    "mnemonic": "OP_241",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 242,
+    "mnemonic": "OP_242",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 243,
+    "mnemonic": "OP_243",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 244,
+    "mnemonic": "OP_244",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 245,
+    "mnemonic": "OP_245",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 246,
+    "mnemonic": "OP_246",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 247,
+    "mnemonic": "OP_247",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 248,
+    "mnemonic": "HELPER_LOAD",
+    "description": "R[M] = E[18](g)",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 249,
+    "mnemonic": "HELPER_LOAD",
+    "description": "R[M] = E[18](g)",
+    "t23_count": 1,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 250,
+    "mnemonic": "OP_250",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 251,
+    "mnemonic": "OP_251",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 252,
+    "mnemonic": "OP_252",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 253,
+    "mnemonic": "OP_253",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 254,
+    "mnemonic": "OP_254",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  },
+  {
+    "opcode": 255,
+    "mnemonic": "OP_255",
+    "description": "unclassified",
+    "t23_count": 0,
+    "raw_handler": "(a)[M[n]]=E[0X12](g[n]);;;;;;;;"
+  }
+]
+]====]
+
+local __KRONOS_APP_CAPTURE_TEXT = ""
+
 local function __save(lines)
-    local data = table.concat(lines, "\n") .. "\n"
-
-    if type(writefile) == "function" then
-        local ok, err = pcall(writefile, "app_payload_capture_v4.txt", data)
-        if ok then
-            print("APP_CAPTURE_V4_SAVED: app_payload_capture_v4.txt")
-        else
-            warn("APP_CAPTURE_V4_SAVE_ERROR:", tostring(err))
-        end
-
-        if type(makefolder) == "function" then
-            pcall(function()
-                if type(isfolder) ~= "function" or not isfolder("LuraphRecovery") then
-                    makefolder("LuraphRecovery")
-                end
-            end)
-
-            local ok2, err2 = pcall(
-                writefile,
-                "LuraphRecovery/app_payload_capture_v4.txt",
-                data
-            )
-
-            if ok2 then
-                print("APP_CAPTURE_V4_SAVED: LuraphRecovery/app_payload_capture_v4.txt")
-            else
-                warn("APP_CAPTURE_V4_FOLDER_SAVE_ERROR:", tostring(err2))
-            end
-        end
-    else
-        warn("APP_CAPTURE_V4_SAVE_ERROR: executor has no writefile()")
-    end
-
-    if type(setclipboard) == "function" then
-        pcall(setclipboard, data)
-    end
-end
-
-local function __isApplicationPrototype(proto)
-    if type(proto) ~= "table" then
-        return false
-    end
-
-    for field = 1, 16 do
-        local value = rawget(proto, field)
-        if type(value) == "table" then
-            local ok, length = pcall(rawlen, value)
-            if ok and length == 4957 then
-                return true
-            end
-        end
-    end
-
-    return false
+    __KRONOS_APP_CAPTURE_TEXT = table.concat(lines, "\n") .. "\n"
+    print("KRONOS_ALL_IN_ONE: app capture buffered")
 end
 
 local function __captureApplication(captures, ...)
@@ -510,28 +2257,9 @@ local function __v61Emit(...)
 end
 
 local function __v61Flush(force)
-    if type(writefile) ~= "function" then
-        return
-    end
-
-    local now = os.clock()
-    if not force and now - __v61LastWrite < 0.5 then
-        return
-    end
-    __v61LastWrite = now
-
-    local data = table.concat(__v61Lines, "\n") .. "\n"
-
-    pcall(writefile, "stage2_lazy_decode_v61.txt", data)
-
-    if type(makefolder) == "function" then
-        pcall(function()
-            if type(isfolder) ~= "function" or not isfolder("LuraphRecovery") then
-                makefolder("LuraphRecovery")
-            end
-        end)
-        pcall(writefile, "LuraphRecovery/stage2_lazy_decode_v61.txt", data)
-    end
+    -- ALL-IN-ONE scanner keeps the lazy-decode log in memory.
+    -- Nothing is written until KRONOS_SCAN_ALL_IN_ONE.txt is finalized.
+    return
 end
 
 local function __v61Wait()
@@ -783,68 +2511,307 @@ local function __v61GraphAtom(value, ids)
     end
 end
 
-local function __v61SaveGraph()
-    if type(__v61Stage2Root) ~= "table" or type(writefile) ~= "function" then
+local __KRONOS_ALL_IN_ONE_DONE = false
+
+local function __kronosAiSafe(value)
+    local ok, result = pcall(tostring, value)
+    if ok then return result end
+    return "<unprintable>"
+end
+
+local function __kronosAiProtoValid(proto)
+    if type(proto) ~= "table" then return false end
+    if type(rawget(proto, 4)) ~= "number" then return false end
+    if type(rawget(proto, 9)) ~= "table" then return false end
+    return true
+end
+
+local function __kronosAiInstructionCount(proto)
+    if not __kronosAiProtoValid(proto) then return 0 end
+    local count = 0
+    local ops = rawget(proto, 9)
+    local key = nil
+    while true do
+        key = next(ops, key)
+        if key == nil then break end
+        if type(key) == "number" and key >= 1 then
+            count += 1
+        end
+    end
+    return count
+end
+
+local function __kronosAiArray(proto, field)
+    local value = type(proto) == "table" and rawget(proto, field) or nil
+    if type(value) == "table" then return value end
+    return nil
+end
+
+local function __kronosAiField(proto, field, pc)
+    local arr = __kronosAiArray(proto, field)
+    if not arr then return nil end
+    return rawget(arr, pc)
+end
+
+local function __kronosAiProtoStrings(proto)
+    local seen, out = {}, {}
+    for field = 1, 11 do
+        local tbl = __kronosAiArray(proto, field)
+        if tbl then
+            local key = nil
+            while true do
+                key = next(tbl, key)
+                if key == nil then break end
+                local value = rawget(tbl, key)
+                if type(value) == "string" and not seen[value] then
+                    seen[value] = true
+                    out[#out + 1] = value
+                end
+            end
+        end
+    end
+    table.sort(out)
+    return out
+end
+
+local __KRONOS_GAME_KEYWORDS = {
+    "Kronos Soul Dungeon", "FarmState", "CombatState", "UseSkills",
+    "Auto Farm Status", "Auto Start is off", "Auto Tower is off",
+    "LastFarmReason", "LastResultReason", "SoulDungeonUpgradeInterval",
+    "SoulDungeonWebhookEmbedColor", "ExitSettlement", "GamePlayerRE",
+    "Reward Name", "Reward Quantity", "CFrame", "Position"
+}
+
+local function __kronosAiScanStage2(root)
+    if __KRONOS_ALL_IN_ONE_DONE then return end
+    if type(root) ~= "table" then
+        warn("KRONOS_ALL_IN_ONE: stage2 root missing")
+        return
+    end
+    __KRONOS_ALL_IN_ONE_DONE = true
+
+    print("KRONOS_ALL_IN_ONE: scan started")
+
+    local allTables, ids = __v61CollectRawGraph(root)
+    local rootPool = rawget(root, 1)
+    local t23 = type(rootPool) == "table" and rawget(rootPool, 104) or nil
+    local t24 = type(rootPool) == "table" and rawget(rootPool, 189) or nil
+
+    if not __kronosAiProtoValid(t23) then
+        warn("KRONOS_ALL_IN_ONE: T23 was not found at rootPool[104]")
+        __KRONOS_ALL_IN_ONE_DONE = false
         return
     end
 
-    print("V61 raw graph serialization started")
+    local reachable = {t23}
+    local reachableSeen = {[t23] = true}
+    local qi = 1
+    local edges = {}
+    local selfmods = {}
+    local totalInstructions = 0
 
-    local tables, ids = __v61CollectRawGraph(__v61Stage2Root)
-    local lines = {
-        "STAGE2_RAW_GRAPH_V61",
-        "ROOT\tT1",
-        "TABLE_COUNT\t" .. tostring(#tables)
-    }
-    local stringLines = {}
-    local stringSeen = {}
+    while qi <= #reachable do
+        local proto = reachable[qi]
+        qi += 1
+        local ops = rawget(proto, 9)
+        totalInstructions += __kronosAiInstructionCount(proto)
 
-    for id, tbl in ipairs(tables) do
-        lines[#lines + 1] = "TABLE\tT" .. tostring(id)
+        local pcs = {}
+        local key = nil
+        while true do
+            key = next(ops, key)
+            if key == nil then break end
+            if type(key) == "number" and key >= 1 then
+                pcs[#pcs + 1] = key
+            end
+        end
+        table.sort(pcs)
 
+        for _, pc in ipairs(pcs) do
+            local opcode = rawget(ops, pc)
+
+            -- Exact NEWCLOSURE opcode in this captured stage2 build.
+            if opcode == 58 then
+                local child = __kronosAiField(proto, 1, pc)
+                local dest = __kronosAiField(proto, 2, pc)
+                if __kronosAiProtoValid(child) then
+                    edges[#edges + 1] = {proto, pc, child, dest}
+                    if not reachableSeen[child] then
+                        reachableSeen[child] = true
+                        reachable[#reachable + 1] = child
+                    end
+                end
+            end
+
+            if opcode == 12 or opcode == 29 or opcode == 149 then
+                selfmods[#selfmods + 1] = {
+                    proto, pc, opcode,
+                    __kronosAiField(proto, 1, pc),
+                    __kronosAiField(proto, 2, pc),
+                    __kronosAiField(proto, 3, pc),
+                    __kronosAiField(proto, 6, pc),
+                    __kronosAiField(proto, 8, pc),
+                    __kronosAiField(proto, 10, pc),
+                    __kronosAiField(proto, 11, pc),
+                }
+            end
+        end
+
+        if qi % 64 == 0 then __v61Wait() end
+    end
+
+    local uniqueStrings, uniqueSeen = {}, {}
+    local gameProtos = {}
+    for _, proto in ipairs(reachable) do
+        local strings = __kronosAiProtoStrings(proto)
+        local hits = {}
+        for _, value in ipairs(strings) do
+            if not uniqueSeen[value] then
+                uniqueSeen[value] = true
+                uniqueStrings[#uniqueStrings + 1] = value
+            end
+        end
+        for _, keyword in ipairs(__KRONOS_GAME_KEYWORDS) do
+            for _, value in ipairs(strings) do
+                if string.find(value, keyword, 1, true) then
+                    hits[#hits + 1] = keyword
+                    break
+                end
+            end
+        end
+        if #hits > 0 then
+            gameProtos[#gameProtos + 1] = {proto, hits, strings}
+        end
+    end
+    table.sort(uniqueStrings)
+
+    local function pname(proto)
+        local id = ids[proto]
+        return id and ("T" .. tostring(id)) or ("table:" .. __kronosAiSafe(proto))
+    end
+
+    local report = {}
+    report[#report + 1] = "KRONOS_SCAN_ALL_IN_ONE_V1"
+    report[#report + 1] = "scan_mode=single_script_in_memory"
+    report[#report + 1] = "external_input_files=0"
+    report[#report + 1] = "live_key_bypass=false"
+    report[#report + 1] = "network_required_for_scan=false"
+    report[#report + 1] = "root=T1"
+    report[#report + 1] = "application=" .. pname(t23)
+    report[#report + 1] = "auth_success=" .. (__kronosAiProtoValid(t24) and pname(t24) or "missing")
+    report[#report + 1] = "t23_maxstack=" .. tostring(rawget(t23, 4))
+    report[#report + 1] = "t23_instruction_slots=" .. tostring(__kronosAiInstructionCount(t23))
+    report[#report + 1] = "reachable_prototypes=" .. tostring(#reachable)
+    report[#report + 1] = "reachable_instruction_slots=" .. tostring(totalInstructions)
+    report[#report + 1] = "closure_edges=" .. tostring(#edges)
+    report[#report + 1] = "selfmod_sites=" .. tostring(#selfmods)
+    report[#report + 1] = "game_related_prototypes=" .. tostring(#gameProtos)
+    report[#report + 1] = "all_stage2_tables=" .. tostring(#allTables)
+    report[#report + 1] = ""
+
+    report[#report + 1] = "===== APP_CAPTURE ====="
+    report[#report + 1] = __KRONOS_APP_CAPTURE_TEXT
+
+    report[#report + 1] = "===== OPCODE_MAP_V2 ====="
+    report[#report + 1] = __KRONOS_EMBEDDED_OPCODE_MAP_JSON
+
+    report[#report + 1] = "===== AUTH_TO_APPLICATION ====="
+    report[#report + 1] = "rootPool[104]=" .. pname(t23)
+    report[#report + 1] = "rootPool[189]=" .. (__kronosAiProtoValid(t24) and pname(t24) or "missing")
+    report[#report + 1] = "modeled_scan_edge=AUTH_SUCCESS -> T24 -> T23"
+    report[#report + 1] = ""
+
+    report[#report + 1] = "===== CLOSURE_GRAPH ====="
+    report[#report + 1] = "parent\tpc\tchild\tdest"
+    for _, e in ipairs(edges) do
+        report[#report + 1] = table.concat({
+            pname(e[1]), tostring(e[2]), pname(e[3]), __kronosAiSafe(e[4])
+        }, "\t")
+    end
+    report[#report + 1] = ""
+
+    report[#report + 1] = "===== SELFMOD_SITES ====="
+    report[#report + 1] = "proto\tpc\topcode\tw\tM\tA\tG\tr\tq\tg"
+    for _, e in ipairs(selfmods) do
+        report[#report + 1] = table.concat({
+            pname(e[1]), tostring(e[2]), tostring(e[3]),
+            __kronosAiSafe(e[4]), __kronosAiSafe(e[5]), __kronosAiSafe(e[6]),
+            __kronosAiSafe(e[7]), __kronosAiSafe(e[8]), __kronosAiSafe(e[9]),
+            __kronosAiSafe(e[10])
+        }, "\t")
+    end
+    report[#report + 1] = ""
+
+    report[#report + 1] = "===== GAME_PROTOTYPES ====="
+    for _, item in ipairs(gameProtos) do
+        local proto, hits, strings = item[1], item[2], item[3]
+        report[#report + 1] = table.concat({
+            "PROTO", pname(proto),
+            "maxstack=" .. tostring(rawget(proto, 4)),
+            "instructions=" .. tostring(__kronosAiInstructionCount(proto)),
+            "hits=" .. table.concat(hits, ",")
+        }, "\t")
+        for _, value in ipairs(strings) do
+            report[#report + 1] = "  STRING\t" .. __v61Escape(value)
+        end
+    end
+    report[#report + 1] = ""
+
+    report[#report + 1] = "===== UNIQUE_STRINGS ====="
+    for _, value in ipairs(uniqueStrings) do
+        report[#report + 1] = __v61Escape(value)
+    end
+    report[#report + 1] = ""
+
+    -- Full raw graph is included so this ONE report is sufficient for later decompile work.
+    report[#report + 1] = "===== FULL_RAW_GRAPH ====="
+    report[#report + 1] = "STAGE2_RAW_GRAPH_V61"
+    report[#report + 1] = "ROOT\tT1"
+    report[#report + 1] = "TABLE_COUNT\t" .. tostring(#allTables)
+
+    for id, tbl in ipairs(allTables) do
+        report[#report + 1] = "TABLE\tT" .. tostring(id)
         local key = nil
         while true do
             key = next(tbl, key)
-            if key == nil then
-                break
-            end
-
+            if key == nil then break end
             local value = rawget(tbl, key)
             local kk, kv = __v61GraphAtom(key, ids)
             local vk, vv = __v61GraphAtom(value, ids)
-
-            lines[#lines + 1] = table.concat({
-                "ENTRY",
-                "T" .. tostring(id),
-                kk, kv,
-                vk, vv
+            report[#report + 1] = table.concat({
+                "ENTRY", "T" .. tostring(id), kk, kv, vk, vv
             }, "\t")
-
-            if type(value) == "string" and not stringSeen[value] then
-                stringSeen[value] = true
-                stringLines[#stringLines + 1] = value
-            end
         end
-
-        if id % 64 == 0 then
-            __v61Wait()
-        end
+        if id % 64 == 0 then __v61Wait() end
     end
 
-    table.sort(stringLines)
-
-    local graphData = table.concat(lines, "\n") .. "\n"
-    local stringsData = table.concat(stringLines, "\n") .. "\n"
-
-    pcall(writefile, "stage2_raw_graph_v61.txt", graphData)
-    pcall(writefile, "stage2_unique_strings_v61.txt", stringsData)
-
-    if type(makefolder) == "function" then
-        pcall(writefile, "LuraphRecovery/stage2_raw_graph_v61.txt", graphData)
-        pcall(writefile, "LuraphRecovery/stage2_unique_strings_v61.txt", stringsData)
+    report[#report + 1] = "===== LAZY_DECODE_LOG ====="
+    for _, line in ipairs(__v61Lines) do
+        report[#report + 1] = line
     end
 
-    print("V61 raw graph saved:", #tables, "tables,", #stringLines, "unique strings")
+    local data = table.concat(report, "\n") .. "\n"
+    if type(writefile) == "function" then
+        local ok, err = pcall(writefile, "KRONOS_SCAN_ALL_IN_ONE.txt", data)
+        if ok then
+            print("KRONOS_ALL_IN_ONE_DONE: KRONOS_SCAN_ALL_IN_ONE.txt")
+            print("KRONOS_ALL_IN_ONE_BYTES:", #data)
+        else
+            warn("KRONOS_ALL_IN_ONE_WRITE_ERROR:", tostring(err))
+        end
+    else
+        warn("KRONOS_ALL_IN_ONE: executor has no writefile()")
+        if type(setclipboard) == "function" then
+            pcall(setclipboard, data)
+            print("KRONOS_ALL_IN_ONE_DONE: copied report to clipboard")
+        end
+    end
+end
+
+local function __v61SaveGraph()
+    -- Legacy multi-file saver disabled in ALL-IN-ONE mode.
+    -- The full raw graph is embedded in KRONOS_SCAN_ALL_IN_ONE.txt.
+    return
 end
 
 local function __v61StartSweepWhenReady()
@@ -864,7 +2831,7 @@ local function __v61StartSweepWhenReady()
 
         __v61Emit("GLOBAL_SWEEP_END")
         __v61Flush(true)
-        __v61SaveGraph()
+        __kronosAiScanStage2(__v61Stage2Root)
 
         print("V61 ALL DONE")
     end)
@@ -1379,56 +3346,10 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
         __KRONOS_T24_CLOSURE = closure
         __KRONOS_T24_PROTO = proto
         __KRONOS_T24_CAPTURES = captures
-
-        print("KRONOS_T24_NATURAL_CALLBACK_CAPTURED_V7", protoSize)
-        __kronosTraceEmit(
-            "T24_CAPTURED",
-            "size", protoSize,
-            "captures_at_creation", __kronosCaptureSummary(captures)
-        )
-        __kronosTraceFlush(true)
-
-        -- IMPORTANT: do not call this closure here.
-        -- Return a wrapper and let the ORIGINAL key-success path invoke it.
+        print("KRONOS_ALL_IN_ONE: T24 captured; post-key payload execution is disabled in scan-only mode")
         return function(...)
-            local args = table.pack(...)
-            __KRONOS_TRACE_STEP = 0
-            __KRONOS_TRACE_ACTIVE = true
-
-            __kronosTraceEmit(
-                "T24_NATURAL_BEGIN",
-                "argc", args.n,
-                "captures_now", __kronosCaptureSummary(captures),
-                "t23_ready", tostring(type(__KRONOS_T23_CLOSURE) == "function")
-            )
-            __kronosTraceFlush(true)
-
-            print(
-                "KRONOS_T24_NATURAL_EXEC_BEGIN_V7",
-                protoSize,
-                "->",
-                __kronosProtoSize(__KRONOS_T23_PROTO)
-            )
-
-            local packed = table.pack(pcall(closure, table.unpack(args, 1, args.n)))
-            local ok = packed[1]
-
-            if ok then
-                __kronosTraceEmit("T24_NATURAL_RETURN", "results", packed.n - 1)
-                print("KRONOS_T24_NATURAL_EXEC_RETURN_V7", packed.n - 1)
-            else
-                __kronosTraceEmit("T24_NATURAL_ERROR", tostring(packed[2]))
-                warn("KRONOS_T24_NATURAL_EXEC_ERROR_V7", packed[2])
-            end
-
-            __KRONOS_TRACE_ACTIVE = false
-            __kronosTraceFlush(true)
-
-            if not ok then
-                error(packed[2], 0)
-            end
-
-            return table.unpack(packed, 2, packed.n)
+            print("KRONOS_ALL_IN_ONE: auth success callback reached; payload execution intentionally blocked")
+            return nil
         end
     end
 
@@ -1461,10 +3382,8 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
     return function(...)
         __captureApplication(captures, ...)
 
-        -- Install the synthetic auth transport BEFORE stage2/T1 begins.
-        -- T24 itself is still invoked only by the original auth flow.
-        __kronosPatchAuthEnvironmentV7()
-
+        -- ALL-IN-ONE scanner does not patch Panda/Auth.
+        -- It captures the stage2 descriptor tree before key validation.
         local results = table.pack(closure(...))
         __v61Stage2Root = results[1]
 
@@ -1474,6 +3393,15 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
             "value", tostring(__v61Stage2Root)
         )
         __v61Flush(true)
+
+        -- Fallback: if targeted lazy sweep does not finish, scan the in-memory tree anyway.
+        if task and type(task.delay) == "function" then
+            task.delay(8, function()
+                if not __KRONOS_ALL_IN_ONE_DONE then
+                    __kronosAiScanStage2(__v61Stage2Root)
+                end
+            end)
+        end
 
         if false and task and type(task.delay) == "function" then
             task.delay(30, function()
@@ -1497,7 +3425,7 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
     end
 end
 
-print("KRONOS_T23_NATURAL_AUTH_TRACE_V7_READY")
+print("KRONOS_ALL_IN_ONE_SCANNER_V1_READY")
 
 -- This file was protected using Luraph Obfuscator v14.7 [https://lura.ph/]
 
