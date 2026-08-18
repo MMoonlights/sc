@@ -2279,7 +2279,7 @@ end
 
 local function __v61Flush(force)
     -- ALL-IN-ONE scanner keeps the lazy-decode log in memory.
-    -- Nothing is written until KRONOS_SCAN_ALL_IN_ONE_V2.txt is finalized.
+    -- Nothing is written until KRONOS_SCAN_ALL_IN_ONE_V3.txt is finalized.
     return
 end
 
@@ -2712,11 +2712,12 @@ local function __kronosAiScanStage2(root)
     end
 
     local report = {}
-    report[#report + 1] = "KRONOS_SCAN_ALL_IN_ONE_V2"
+    report[#report + 1] = "KRONOS_SCAN_ALL_IN_ONE_V3"
     report[#report + 1] = "scan_mode=single_script_in_memory"
     report[#report + 1] = "external_input_files=0"
     report[#report + 1] = "live_key_bypass=false"
     report[#report + 1] = "network_required_for_scan=false"
+    report[#report + 1] = "lazy_decoder_observer=enabled"
     report[#report + 1] = "root=T1"
     report[#report + 1] = "application=" .. pname(t23)
     report[#report + 1] = "auth_success=" .. (__kronosAiProtoValid(t24) and pname(t24) or "missing")
@@ -2733,13 +2734,13 @@ local function __kronosAiScanStage2(root)
     report[#report + 1] = "===== APP_CAPTURE ====="
     report[#report + 1] = __KRONOS_APP_CAPTURE_TEXT
 
-    report[#report + 1] = "===== OPCODE_MAP_V2 ====="
+    report[#report + 1] = "===== OPCODE_MAP_V3 ====="
     report[#report + 1] = __KRONOS_EMBEDDED_OPCODE_MAP_JSON
 
     report[#report + 1] = "===== AUTH_TO_APPLICATION ====="
     report[#report + 1] = "rootPool[104]=" .. pname(t23)
     report[#report + 1] = "rootPool[189]=" .. (__kronosAiProtoValid(t24) and pname(t24) or "missing")
-    report[#report + 1] = "modeled_scan_edge=AUTH_SUCCESS -> T24 -> T23"
+    report[#report + 1] = "modeled_scan_edge=AUTH_SUCCESS -> " .. (__kronosAiProtoValid(t24) and pname(t24) or "missing") .. " -> " .. pname(t23)
     report[#report + 1] = ""
 
     report[#report + 1] = "===== CLOSURE_GRAPH ====="
@@ -2813,9 +2814,9 @@ local function __kronosAiScanStage2(root)
 
     local data = table.concat(report, "\n") .. "\n"
     if type(writefile) == "function" then
-        local ok, err = pcall(writefile, "KRONOS_SCAN_ALL_IN_ONE_V2.txt", data)
+        local ok, err = pcall(writefile, "KRONOS_SCAN_ALL_IN_ONE_V3.txt", data)
         if ok then
-            print("KRONOS_ALL_IN_ONE_DONE: KRONOS_SCAN_ALL_IN_ONE_V2.txt")
+            print("KRONOS_ALL_IN_ONE_DONE: KRONOS_SCAN_ALL_IN_ONE_V3.txt")
             print("KRONOS_ALL_IN_ONE_BYTES:", #data)
         else
             warn("KRONOS_ALL_IN_ONE_WRITE_ERROR:", tostring(err))
@@ -2831,7 +2832,7 @@ end
 
 local function __v61SaveGraph()
     -- Legacy multi-file saver disabled in ALL-IN-ONE mode.
-    -- The full raw graph is embedded in KRONOS_SCAN_ALL_IN_ONE_V2.txt.
+    -- The full raw graph is embedded in KRONOS_SCAN_ALL_IN_ONE_V3.txt.
     return
 end
 
@@ -3217,10 +3218,12 @@ local function __kronosPatchAuthEnvironmentV7()
 end
 
 local function __kronosWrapP10V4(baseClosure, captures)
-    -- V4 deliberately does NOT call the old __v61WrapP10 observer here.
-    -- That observer starts the broad lazy-decode sweep, which polluted V3's
-    -- trace after the direct execution failed. Calling baseClosure preserves
-    -- the payload's exact behavior while keeping this trace scoped to T24/T23.
+    -- ALL-IN-ONE V3: this is a scan-only build, so re-enable the exact v61
+    -- lazy-decoder observer. V2 accidentally disabled it, which preserved the
+    -- prototype tree but left game constants such as FarmState/CombatState
+    -- encoded and produced game_related_prototypes=0.
+    local observedClosure = __v61WrapP10(baseClosure)
+
     return function(...)
         local args
         if __KRONOS_TRACE_ACTIVE then
@@ -3235,7 +3238,7 @@ local function __kronosWrapP10V4(baseClosure, captures)
             )
         end
 
-        local results = table.pack(baseClosure(...))
+        local results = table.pack(observedClosure(...))
 
         if __KRONOS_TRACE_ACTIVE then
             __kronosTraceEmit(
@@ -3446,7 +3449,7 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
     end
 end
 
-print("KRONOS_ALL_IN_ONE_SCANNER_V2_READY")
+print("KRONOS_ALL_IN_ONE_SCANNER_V3_READY")
 
 -- This file was protected using Luraph Obfuscator v14.7 [https://lura.ph/]
 
