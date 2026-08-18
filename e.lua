@@ -2087,6 +2087,27 @@ local function __save(lines)
     print("KRONOS_ALL_IN_ONE: app capture buffered")
 end
 
+
+local function __isApplicationPrototype(proto)
+    if type(proto) ~= "table" then
+        return false
+    end
+
+    -- This is the exact application-container signature used by the working
+    -- V7 capture path for this Luraph v14.7 sample.
+    for field = 1, 16 do
+        local value = rawget(proto, field)
+        if type(value) == "table" then
+            local ok, length = pcall(rawlen, value)
+            if ok and length == 4957 then
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
 local function __captureApplication(captures, ...)
     if __appCaptureDone then
         return
@@ -2258,7 +2279,7 @@ end
 
 local function __v61Flush(force)
     -- ALL-IN-ONE scanner keeps the lazy-decode log in memory.
-    -- Nothing is written until KRONOS_SCAN_ALL_IN_ONE.txt is finalized.
+    -- Nothing is written until KRONOS_SCAN_ALL_IN_ONE_V2.txt is finalized.
     return
 end
 
@@ -2691,7 +2712,7 @@ local function __kronosAiScanStage2(root)
     end
 
     local report = {}
-    report[#report + 1] = "KRONOS_SCAN_ALL_IN_ONE_V1"
+    report[#report + 1] = "KRONOS_SCAN_ALL_IN_ONE_V2"
     report[#report + 1] = "scan_mode=single_script_in_memory"
     report[#report + 1] = "external_input_files=0"
     report[#report + 1] = "live_key_bypass=false"
@@ -2792,9 +2813,9 @@ local function __kronosAiScanStage2(root)
 
     local data = table.concat(report, "\n") .. "\n"
     if type(writefile) == "function" then
-        local ok, err = pcall(writefile, "KRONOS_SCAN_ALL_IN_ONE.txt", data)
+        local ok, err = pcall(writefile, "KRONOS_SCAN_ALL_IN_ONE_V2.txt", data)
         if ok then
-            print("KRONOS_ALL_IN_ONE_DONE: KRONOS_SCAN_ALL_IN_ONE.txt")
+            print("KRONOS_ALL_IN_ONE_DONE: KRONOS_SCAN_ALL_IN_ONE_V2.txt")
             print("KRONOS_ALL_IN_ONE_BYTES:", #data)
         else
             warn("KRONOS_ALL_IN_ONE_WRITE_ERROR:", tostring(err))
@@ -2810,7 +2831,7 @@ end
 
 local function __v61SaveGraph()
     -- Legacy multi-file saver disabled in ALL-IN-ONE mode.
-    -- The full raw graph is embedded in KRONOS_SCAN_ALL_IN_ONE.txt.
+    -- The full raw graph is embedded in KRONOS_SCAN_ALL_IN_ONE_V2.txt.
     return
 end
 
@@ -3425,7 +3446,7 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
     end
 end
 
-print("KRONOS_ALL_IN_ONE_SCANNER_V1_READY")
+print("KRONOS_ALL_IN_ONE_SCANNER_V2_READY")
 
 -- This file was protected using Luraph Obfuscator v14.7 [https://lura.ph/]
 
