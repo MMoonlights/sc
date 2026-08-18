@@ -890,26 +890,33 @@ end
 
 
 -- ============================================================================
--- KRONOS T23 direct trace extension V3
--- V3: capture the 3963-instruction T23 application closure directly when T1
--- constructs it, then invoke it with zero args after T1 finishes initialization.
--- This matches the captured success-callback flow (T24 loads captured parent R9
--- and calls it with no arguments) and avoids depending on Panda/key UI execution.
--- The stage2 VM hook records both BEFORE and AFTER state so self-modifying op12/149
--- can be reconstructed from the same run.
+-- KRONOS T23 success-callback trace extension V4
+-- V4 fixes V3's early-start bug. Instead of invoking T23 immediately after the
+-- T23 closure is constructed at T1 pc104, it waits for the exact T24 success
+-- callback descriptor stored in stage2Root[1][189]. T24 is created later by T1,
+-- captures the T23 closure by value, then its pc28/29 path loads that captured
+-- closure and calls it with zero arguments. Invoking the real T24 closure thus
+-- preserves all T1 initialization that happens before the key-success callback.
+--
+-- Trace is active ONLY around T24 -> T23 execution and is always disabled after
+-- return/error, preventing V3's post-error v61 background sweep from generating
+-- tens of megabytes of unrelated trace.
 -- ============================================================================
 local __KRONOS_TRACE_ACTIVE = false
 local __KRONOS_TRACE_LINES = {}
 local __KRONOS_TRACE_STEP = 0
-local __KRONOS_TRACE_LAST_FLUSH = 0
 local __KRONOS_TRACE_PROTO_IDS = setmetatable({}, { __mode = "k" })
 local __KRONOS_TRACE_PROTO_COUNT = 0
-local __KRONOS_TRACE_MAX_STEPS = 350000
-local __KRONOS_PATCHED = false
+local __KRONOS_TRACE_MAX_STEPS = 600000
+local __KRONOS_TRACE_PATH = "KRONOS_T23_vm_trace_v4.tsv"
+local __KRONOS_TRACE_STARTED_FILE = false
+
 local __KRONOS_T23_CLOSURE = nil
 local __KRONOS_T23_PROTO = nil
-local __KRONOS_T23_SCHEDULED = false
-local __KRONOS_T23_STARTED = false
+local __KRONOS_T24_CLOSURE = nil
+local __KRONOS_T24_PROTO = nil
+local __KRONOS_T24_STARTED = false
+local __KRONOS_T24_SCHEDULED = false
 
 local function __kronosSafe(value)
     local kind = type(value)
@@ -948,22 +955,41 @@ local function __kronosTraceEmit(...)
     __KRONOS_TRACE_LINES[#__KRONOS_TRACE_LINES + 1] = table.concat(parts, "\t")
 end
 
+local function __kronosEnsureTraceFile()
+    if __KRONOS_TRACE_STARTED_FILE then return end
+    __KRONOS_TRACE_STARTED_FILE = true
+    if type(writefile) == "function" then
+        pcall(writefile, __KRONOS_TRACE_PATH, "")
+        if type(makefolder) == "function" then
+            pcall(function()
+                if type(isfolder) ~= "function" or not isfolder("LuraphRecovery") then
+                    makefolder("LuraphRecovery")
+                end
+            end)
+            pcall(writefile, "LuraphRecovery/" .. __KRONOS_TRACE_PATH, "")
+        end
+    end
+end
+
 local function __kronosTraceFlush(force)
-    if type(writefile) ~= "function" then return end
-    local now = os.clock()
-    if not force and now - __KRONOS_TRACE_LAST_FLUSH < 0.35 and #__KRONOS_TRACE_LINES % 1000 ~= 0 then
+    if #__KRONOS_TRACE_LINES == 0 then return end
+    __kronosEnsureTraceFile()
+    local data = table.concat(__KRONOS_TRACE_LINES, "\n") .. "\n"
+
+    if type(appendfile) == "function" then
+        pcall(appendfile, __KRONOS_TRACE_PATH, data)
+        pcall(appendfile, "LuraphRecovery/" .. __KRONOS_TRACE_PATH, data)
+        table.clear(__KRONOS_TRACE_LINES)
         return
     end
-    __KRONOS_TRACE_LAST_FLUSH = now
-    local data = table.concat(__KRONOS_TRACE_LINES, "\n") .. "\n"
-    pcall(writefile, "KRONOS_T23_vm_trace_v3.tsv", data)
-    if type(makefolder) == "function" then
-        pcall(function()
-            if type(isfolder) ~= "function" or not isfolder("LuraphRecovery") then
-                makefolder("LuraphRecovery")
-            end
-        end)
-        pcall(writefile, "LuraphRecovery/KRONOS_T23_vm_trace_v3.tsv", data)
+
+    -- Fallback for executors without appendfile. Keep the full buffer and rewrite
+    -- less frequently; force is used at important lifecycle markers.
+    if force or #__KRONOS_TRACE_LINES >= 10000 then
+        if type(writefile) == "function" then
+            pcall(writefile, __KRONOS_TRACE_PATH, data)
+            pcall(writefile, "LuraphRecovery/" .. __KRONOS_TRACE_PATH, data)
+        end
     end
 end
 
@@ -973,7 +999,11 @@ local function __kronosProtoId(proto)
     __KRONOS_TRACE_PROTO_COUNT += 1
     id = __KRONOS_TRACE_PROTO_COUNT
     __KRONOS_TRACE_PROTO_IDS[proto] = id
-    __kronosTraceEmit("PROTO", id, "size", __kronosProtoSize(proto), "maxstack", type(proto)=="table" and tostring(rawget(proto,4)) or "")
+    __kronosTraceEmit(
+        "PROTO", id,
+        "size", __kronosProtoSize(proto),
+        "maxstack", type(proto) == "table" and tostring(rawget(proto, 4)) or ""
+    )
     return id
 end
 
@@ -986,6 +1016,7 @@ end
 
 function __KRONOS_VM_STEP(proto, pc, opcode, registers, top, oG, oK, oM, oA, oW, oR)
     if not __KRONOS_TRACE_ACTIVE then return end
+
     __KRONOS_TRACE_STEP += 1
     if __KRONOS_TRACE_STEP > __KRONOS_TRACE_MAX_STEPS then
         if __KRONOS_TRACE_STEP == __KRONOS_TRACE_MAX_STEPS + 1 then
@@ -1010,11 +1041,15 @@ function __KRONOS_VM_STEP(proto, pc, opcode, registers, top, oG, oK, oM, oA, oW,
         "w", __kronosSafe(oW), "Rw", __kronosReg(registers, oW),
         "r", __kronosSafe(oR), "Rr", __kronosReg(registers, oR)
     )
-    if __KRONOS_TRACE_STEP % 500 == 0 then __kronosTraceFlush(false) end
+
+    if __KRONOS_TRACE_STEP % 2000 == 0 then
+        __kronosTraceFlush(false)
+    end
 end
 
 function __KRONOS_VM_AFTER(proto, pc, opcodeAfter, registers, top, oG, oK, oM, oA, oW, oR)
     if not __KRONOS_TRACE_ACTIVE then return end
+
     local id = __kronosProtoId(proto)
     __kronosTraceEmit(
         "AFTER", __KRONOS_TRACE_STEP,
@@ -1032,150 +1067,136 @@ function __KRONOS_VM_AFTER(proto, pc, opcodeAfter, registers, top, oG, oK, oM, o
     )
 end
 
-local function __kronosSyntheticPandaResponse()
-    return {
-        Success = true,
-        StatusCode = 200,
-        StatusMessage = "OK",
-        Headers = { ["content-type"] = "application/json" },
-        Body = [[{"V2_Authentication":"success","Key_Information":{"Premium_Mode":false,"NoKey_Requirement":false,"expiresAt":4102444800},"reason":"success","message":"Authenticated"}]],
-    }
+local function __kronosRootPool()
+    if type(__v61Stage2Root) ~= "table" then return nil end
+    local pool = rawget(__v61Stage2Root, 1)
+    if type(pool) ~= "table" then return nil end
+    return pool
 end
 
-local function __kronosIsAuthUrl(url)
-    url = tostring(url or ""):lower()
-    return url:find("panda", 1, true) ~= nil
-        or url:find("v2_validation", 1, true) ~= nil
-        or url:find("pandauth", 1, true) ~= nil
+local function __kronosExactRootProto(index)
+    local pool = __kronosRootPool()
+    if not pool then return nil end
+    local value = rawget(pool, index)
+    if type(value) ~= "table" then return nil end
+    return value
 end
 
-local function __kronosPatchAuthEnvironment()
-    if __KRONOS_PATCHED then return end
-    __KRONOS_PATCHED = true
-
-    local env = _G
-    if type(getgenv) == "function" then
-        local ok, result = pcall(getgenv)
-        if ok and type(result) == "table" then env = result end
-    end
-
-    local real = {
-        request = rawget(env, "request"),
-        http_request = rawget(env, "http_request"),
-        isfile = rawget(env, "isfile"),
-        readfile = rawget(env, "readfile"),
-        writefile = rawget(env, "writefile"),
-        syn = rawget(env, "syn"),
-        http = rawget(env, "http"),
-        fluxus = rawget(env, "fluxus"),
-    }
-
-    local function requestProxy(options, ...)
-        local url = type(options) == "table" and (options.Url or options.URL or options.url) or options
-        if __kronosIsAuthUrl(url) then
-            __kronosTraceEmit("AUTH_BYPASS", "request", tostring(url))
-            __kronosTraceFlush(true)
-            return __kronosSyntheticPandaResponse()
+local function __kronosCaptureSummary(captures)
+    if type(captures) ~= "table" then return "type=" .. type(captures) end
+    local parts = {}
+    local key = nil
+    local count = 0
+    while true do
+        key = next(captures, key)
+        if key == nil then break end
+        count += 1
+        if #parts < 16 then
+            parts[#parts + 1] = tostring(key) .. "=" .. __kronosSafe(rawget(captures, key))
         end
-        local fn = real.request or real.http_request
-        if type(fn) == "function" then return fn(options, ...) end
-        return { Success = false, StatusCode = 599, StatusMessage = "offline trace", Body = "" }
     end
+    return "count=" .. tostring(count) .. ";" .. table.concat(parts, ",")
+end
 
-    rawset(env, "request", requestProxy)
-    rawset(env, "http_request", requestProxy)
+local function __kronosWrapP10V4(baseClosure, captures)
+    -- V4 deliberately does NOT call the old __v61WrapP10 observer here.
+    -- That observer starts the broad lazy-decode sweep, which polluted V3's
+    -- trace after the direct execution failed. Calling baseClosure preserves
+    -- the payload's exact behavior while keeping this trace scoped to T24/T23.
+    return function(...)
+        local args
+        if __KRONOS_TRACE_ACTIVE then
+            args = table.pack(...)
+            __kronosTraceEmit(
+                "P10_CALL",
+                "argc", args.n,
+                "a1", __kronosSafe(args[1]),
+                "a2", __kronosSafe(args[2]),
+                "a3", __kronosSafe(args[3]),
+                "captures", __kronosCaptureSummary(captures)
+            )
+        end
 
-    local function makeProxyTable(original)
-        local proxy = {}
-        return setmetatable(proxy, {
-            __index = function(_, key)
-                if key == "request" then return requestProxy end
-                if type(original) == "table" then return original[key] end
-                return nil
-            end,
-            __newindex = function(_, key, value)
-                if type(original) == "table" then original[key] = value else rawset(proxy, key, value) end
-            end,
-        })
+        local results = table.pack(baseClosure(...))
+
+        if __KRONOS_TRACE_ACTIVE then
+            __kronosTraceEmit(
+                "P10_RETURN",
+                "n", results.n,
+                "r1", __kronosSafe(results[1]),
+                "r2", __kronosSafe(results[2]),
+                "r3", __kronosSafe(results[3])
+            )
+        end
+
+        return table.unpack(results, 1, results.n)
     end
+end
 
-    if type(real.syn) == "table" then rawset(env, "syn", makeProxyTable(real.syn)) end
-    if type(real.http) == "table" then rawset(env, "http", makeProxyTable(real.http)) end
-    if type(real.fluxus) == "table" then rawset(env, "fluxus", makeProxyTable(real.fluxus)) end
+local function __kronosRunSuccessCallback()
+    if __KRONOS_T24_STARTED or type(__KRONOS_T24_CLOSURE) ~= "function" then return end
+    __KRONOS_T24_STARTED = true
 
-    rawset(env, "isfile", function(path)
-        if tostring(path) == "KRONOS/saved_key.txt" then return true end
-        if type(real.isfile) == "function" then return real.isfile(path) end
-        return false
-    end)
-
-    rawset(env, "readfile", function(path)
-        if tostring(path) == "KRONOS/saved_key.txt" then
-            __kronosTraceEmit("AUTH_BYPASS", "saved_key", "KRONOS-TRACE-AUTHORIZED")
-            return "KRONOS-TRACE-AUTHORIZED"
-        end
-        if type(real.readfile) == "function" then return real.readfile(path) end
-        error("readfile unavailable for " .. tostring(path), 2)
-    end)
-
-    -- Preserve normal output files; suppress only writes of the synthetic auth key.
-    rawset(env, "writefile", function(path, data)
-        if tostring(path) == "KRONOS/saved_key.txt" then
-            __kronosTraceEmit("AUTH_BYPASS", "saved_key_write", tostring(data))
-            return
-        end
-        if type(real.writefile) == "function" then return real.writefile(path, data) end
-    end)
-
-    __kronosTraceEmit("AUTH_ENV_PATCHED")
+    __KRONOS_TRACE_STEP = 0
+    __KRONOS_TRACE_ACTIVE = true
+    __kronosTraceEmit(
+        "T24_SUCCESS_BEGIN",
+        "t24_size", __kronosProtoSize(__KRONOS_T24_PROTO),
+        "t23_size", __kronosProtoSize(__KRONOS_T23_PROTO)
+    )
     __kronosTraceFlush(true)
+
+    print(
+        "KRONOS_T24_SUCCESS_EXEC_BEGIN",
+        __kronosProtoSize(__KRONOS_T24_PROTO),
+        "->",
+        __kronosProtoSize(__KRONOS_T23_PROTO)
+    )
+
+    local ok, result = pcall(function()
+        return table.pack(__KRONOS_T24_CLOSURE())
+    end)
+
+    if ok then
+        __kronosTraceEmit("T24_SUCCESS_RETURN", "results", result.n)
+        print("KRONOS_T24_SUCCESS_EXEC_RETURN", result.n)
+    else
+        __kronosTraceEmit("T24_SUCCESS_ERROR", tostring(result))
+        warn("KRONOS_T24_SUCCESS_EXEC_ERROR", result)
+    end
+
+    -- Critical V4 fix: never trace unrelated v61 background sweeps after the
+    -- success callback returns/fails.
+    __KRONOS_TRACE_ACTIVE = false
+    __kronosTraceFlush(true)
+end
+
+local function __kronosScheduleSuccessCallback()
+    if __KRONOS_T24_SCHEDULED then return end
+    __KRONOS_T24_SCHEDULED = true
+
+    local function run()
+        -- T24 exists only after T1 has advanced well past T23 creation. A short
+        -- delay lets the current T1 VM instruction/closure construction finish.
+        if task and type(task.wait) == "function" then
+            task.wait(0.35)
+        end
+        __kronosRunSuccessCallback()
+    end
+
+    if task and type(task.spawn) == "function" then
+        task.spawn(run)
+    elseif task and type(task.delay) == "function" then
+        task.delay(0.35, __kronosRunSuccessCallback)
+    else
+        __kronosRunSuccessCallback()
+    end
 end
 
 local function __kronosWrapStage2Root(closure, proto)
     return function(...)
-        print("KRONOS_STAGE2_ROOT_EXEC_FOUND_V3", __kronosProtoSize(proto))
+        print("KRONOS_STAGE2_ROOT_EXEC_FOUND_V4", __kronosProtoSize(proto))
         return closure(...)
-    end
-end
-
-local function __kronosRunT23Direct()
-    if __KRONOS_T23_STARTED or type(__KRONOS_T23_CLOSURE) ~= "function" then return end
-    __KRONOS_T23_STARTED = true
-
-    -- Patch only auth transport/saved-key helpers. Non-auth requests preserve the
-    -- executor's original request implementation, matching V2 behavior.
-    __kronosPatchAuthEnvironment()
-    __KRONOS_TRACE_ACTIVE = true
-    __kronosTraceEmit("T23_DIRECT_BEGIN", "size", __kronosProtoSize(__KRONOS_T23_PROTO))
-    __kronosTraceFlush(true)
-    print("KRONOS_T23_DIRECT_EXEC_BEGIN", __kronosProtoSize(__KRONOS_T23_PROTO))
-
-    local ok, result = pcall(function()
-        return table.pack(__KRONOS_T23_CLOSURE())
-    end)
-
-    if ok then
-        __kronosTraceEmit("T23_DIRECT_RETURN", "results", result.n)
-        print("KRONOS_T23_DIRECT_EXEC_RETURN", result.n)
-    else
-        __kronosTraceEmit("T23_DIRECT_ERROR", tostring(result))
-        warn("KRONOS_T23_DIRECT_EXEC_ERROR", result)
-    end
-    __kronosTraceFlush(true)
-end
-
-local function __kronosScheduleT23()
-    if __KRONOS_T23_SCHEDULED then return end
-    __KRONOS_T23_SCHEDULED = true
-    if task and type(task.delay) == "function" then
-        task.delay(1.5, __kronosRunT23Direct)
-    elseif task and type(task.spawn) == "function" then
-        task.spawn(function()
-            if task.wait then task.wait(1.5) end
-            __kronosRunT23Direct()
-        end)
-    else
-        __kronosRunT23Direct()
     end
 end
 
@@ -1183,23 +1204,43 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
     local closure = factory(proto, captures)
     local protoSize = __v61ProtoSize(proto)
 
-    if protoSize == 3963 then
+    local exactT23 = __kronosExactRootProto(104)
+    local exactT24 = __kronosExactRootProto(189)
+
+    if exactT23 ~= nil and proto == exactT23 then
         __KRONOS_T23_CLOSURE = closure
         __KRONOS_T23_PROTO = proto
-        print("KRONOS_T23_CLOSURE_CAPTURED", protoSize)
-        __kronosTraceEmit("T23_CAPTURED", "size", protoSize, "captures", type(captures) == "table" and tostring(rawlen(captures)) or "")
+        print("KRONOS_T23_EXACT_CLOSURE_CAPTURED", protoSize)
+        __kronosTraceEmit(
+            "T23_CAPTURED",
+            "size", protoSize,
+            "captures", __kronosCaptureSummary(captures)
+        )
         __kronosTraceFlush(true)
-        __kronosScheduleT23()
+        return closure
+    end
+
+    if exactT24 ~= nil and proto == exactT24 then
+        __KRONOS_T24_CLOSURE = closure
+        __KRONOS_T24_PROTO = proto
+        print("KRONOS_T24_SUCCESS_CALLBACK_CAPTURED", protoSize)
+        __kronosTraceEmit(
+            "T24_CAPTURED",
+            "size", protoSize,
+            "captures", __kronosCaptureSummary(captures)
+        )
+        __kronosTraceFlush(true)
+        __kronosScheduleSuccessCallback()
         return closure
     end
 
     if __v61Stage2Root ~= nil and (proto == __v61Stage2Root or protoSize == 239) then
-        print("KRONOS_STAGE2_ROOT_CLOSURE_FOUND", protoSize)
+        print("KRONOS_STAGE2_ROOT_CLOSURE_FOUND_V4", protoSize)
         return __kronosWrapStage2Root(closure, proto)
     end
 
     if protoSize == 105 then
-        return __v61WrapP10(closure)
+        return __kronosWrapP10V4(closure, captures)
     end
 
     if not __isApplicationPrototype(proto) then
@@ -1235,7 +1276,6 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
                     __v61Emit("TIMEOUT_SWEEP_END")
                     __v61Flush(true)
                     __v61SaveGraph()
-                    print("V61 TIMEOUT SWEEP DONE")
                 end
             end)
         end
@@ -1244,7 +1284,7 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
     end
 end
 
-print("KRONOS_T23_DIRECT_TRACE_V3_READY")
+print("KRONOS_T23_SUCCESS_TRACE_V4_READY")
 
 -- This file was protected using Luraph Obfuscator v14.7 [https://lura.ph/]
 
