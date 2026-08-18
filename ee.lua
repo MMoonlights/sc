@@ -908,7 +908,7 @@ local __KRONOS_TRACE_STEP = 0
 local __KRONOS_TRACE_PROTO_IDS = setmetatable({}, { __mode = "k" })
 local __KRONOS_TRACE_PROTO_COUNT = 0
 local __KRONOS_TRACE_MAX_STEPS = 600000
-local __KRONOS_TRACE_PATH = "KRONOS_T23_vm_trace_v5.tsv"
+local __KRONOS_TRACE_PATH = "KRONOS_T23_vm_trace_v6.tsv"
 local __KRONOS_TRACE_STARTED_FILE = false
 
 local __KRONOS_T23_CLOSURE = nil
@@ -1150,7 +1150,7 @@ local function __kronosRunSuccessCallback()
     __kronosTraceFlush(true)
 
     print(
-        "KRONOS_T24_SUCCESS_EXEC_BEGIN_V5",
+        "KRONOS_T24_SUCCESS_EXEC_BEGIN_V6",
         __kronosProtoSize(__KRONOS_T24_PROTO),
         "->",
         __kronosProtoSize(__KRONOS_T23_PROTO)
@@ -1162,10 +1162,10 @@ local function __kronosRunSuccessCallback()
 
     if ok then
         __kronosTraceEmit("T24_SUCCESS_RETURN", "results", result.n)
-        print("KRONOS_T24_SUCCESS_EXEC_RETURN_V5", result.n)
+        print("KRONOS_T24_SUCCESS_EXEC_RETURN_V6", result.n)
     else
         __kronosTraceEmit("T24_SUCCESS_ERROR", tostring(result))
-        warn("KRONOS_T24_SUCCESS_EXEC_ERROR_V5", result)
+        warn("KRONOS_T24_SUCCESS_EXEC_ERROR_V6", result)
     end
 
     -- Critical V4 fix: never trace unrelated v61 background sweeps after the
@@ -1175,7 +1175,7 @@ local function __kronosRunSuccessCallback()
 end
 
 local function __kronosScheduleSuccessCallback()
-    -- V5: NEVER execute T24 while T1 is still running. The v14.7 stage2
+    -- V6: NEVER execute T24 while T1 is still running. The v14.7 stage2
     -- lazy-decoder mutates/initializes shared state during T1 execution.
     if __KRONOS_T24_SCHEDULED then return end
     if not __KRONOS_STAGE2_ROOT_RETURNED then return end
@@ -1203,7 +1203,7 @@ end
 
 local function __kronosWrapStage2Root(closure, proto)
     return function(...)
-        print("KRONOS_STAGE2_ROOT_EXEC_FOUND_V5", __kronosProtoSize(proto))
+        print("KRONOS_STAGE2_ROOT_EXEC_FOUND_V6", __kronosProtoSize(proto))
 
         local results = table.pack(closure(...))
 
@@ -1217,7 +1217,7 @@ local function __kronosWrapStage2Root(closure, proto)
         )
         __kronosTraceFlush(true)
         print(
-            "KRONOS_STAGE2_ROOT_RETURNED_V5",
+            "KRONOS_STAGE2_ROOT_RETURNED_V6",
             "T23", type(__KRONOS_T23_CLOSURE),
             "T24", type(__KRONOS_T24_CLOSURE)
         )
@@ -1251,7 +1251,7 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
         __KRONOS_T24_CLOSURE = closure
         __KRONOS_T24_PROTO = proto
         __KRONOS_T24_CAPTURES = captures
-        print("KRONOS_T24_SUCCESS_CALLBACK_CAPTURED_V5", protoSize)
+        print("KRONOS_T24_SUCCESS_CALLBACK_CAPTURED_V6", protoSize)
         __kronosTraceEmit(
             "T24_CAPTURED",
             "size", protoSize,
@@ -1267,8 +1267,19 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
         return closure
     end
 
-    if __v61Stage2Root ~= nil and (proto == __v61Stage2Root or protoSize == 239) then
-        print("KRONOS_STAGE2_ROOT_CLOSURE_FOUND_V4", protoSize)
+    -- V6 critical fix:
+    -- The T1 closure is constructed before __v61Stage2Root is assigned, so the
+    -- V5 guard `__v61Stage2Root ~= nil` could never wrap it at construction time.
+    -- In this exact captured graph T1 is uniquely identified by:
+    --   opcode-stream size = 239, maxstack/descriptor[4] = 48.
+    if protoSize == 239 and type(proto) == "table" and rawget(proto, 4) == 48 then
+        print("KRONOS_STAGE2_ROOT_CLOSURE_FOUND_V6", protoSize, "maxstack", rawget(proto, 4))
+        __kronosTraceEmit(
+            "STAGE2_ROOT_CAPTURED",
+            "size", protoSize,
+            "maxstack", rawget(proto, 4)
+        )
+        __kronosTraceFlush(true)
         return __kronosWrapStage2Root(closure, proto)
     end
 
@@ -1317,7 +1328,7 @@ local function __APP_CLOSURE_CAPTURE(factory, proto, captures)
     end
 end
 
-print("KRONOS_T23_SUCCESS_TRACE_V5_READY")
+print("KRONOS_T23_SUCCESS_TRACE_V6_READY")
 
 -- This file was protected using Luraph Obfuscator v14.7 [https://lura.ph/]
 
